@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include "wm8940_regs.h"
 
-#define I2C_WRITE(reg, val) MyI2C_Write(reg, val)
-#define I2C_READ(reg) MyI2C_Read(reg)
+#define WM8940_I2C_WRITE(reg, val) MyI2C_Write(reg, val)
+#define WM8940_I2C_READ(reg) MyI2C_Read(reg)
 
 // Volume range: -57 - +6 dB
 #define WM8940_SPKVOL_DB_TO_REG_VALUE(vol_db) ((vol_db + 57) & 0x3F)
@@ -17,6 +17,14 @@ typedef struct _WM8940
     uint32_t i2c_handle;
     uint8_t _volume;
 } WM8940_t;
+
+
+typedef enum _wm8940_status
+{
+    WM8940_STATUS_OK = 0,
+    WM8940_STATUS_ERROR = 1,
+    WM8940_STATUS_ARGERROR = 2
+} wm8940_status_t;
 
 
 // Input signal path
@@ -47,7 +55,8 @@ void WM8940_Set_Speaker_Source(wm8940_speaker_source_t source);
 void WM8940_Set_Speaker_FromBypass_Attenuation(uint8_t state);
 void WM8940_Set_Speaker_ZeroCross(uint8_t state);
 void WM8940_Set_Speaker_Mute(uint8_t state);
-void WM8940_Set_Speaker_Volume(int8_t vol_db);
+void WM8940_Set_Speaker_Volume(uint8_t regval);
+void WM8940_Set_Speaker_Volume_db(int8_t vol_db);
 void WM8940_Set_Mono_Source(wm8940_speaker_source_t source);
 void WM8940_Set_Mono_FromBypass_Attenuation(uint8_t state);
 void WM8940_Set_Mono_Mute(uint8_t state);
