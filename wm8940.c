@@ -2,13 +2,13 @@
 #include "wm8940_regs.h"
 
 /* ----- Input signal path ----- */
-wm8940_input_t WM8940_Get_PGAInput(WM8940_t* wm8940)
+wm8940_input_t WM8940_Get_PGA_Input(WM8940_t* wm8940)
 {
     uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_INPUT_CTRL);
     return val & 0x0007;
 }
 
-void WM8940_Set_PGAInput(WM8940_t* wm8940, wm8940_input_t input)
+void WM8940_Set_PGA_Input(WM8940_t* wm8940, wm8940_input_t input)
 {
     uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_INPUT_CTRL);
     val &= ~(0x0007);
@@ -16,13 +16,13 @@ void WM8940_Set_PGAInput(WM8940_t* wm8940, wm8940_input_t input)
     WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_INPUT_CTRL, val);
 }
 
-uint8_t WM8940_Get_PGAInput_Volume(WM8940_t* wm8940)
+uint8_t WM8940_Get_PGA_Volume(WM8940_t* wm8940)
 {
     uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL);
     return val & 0x003F;
 }
 
-void WM8940_Set_PGAInput_Volume(WM8940_t* wm8940, uint8_t regval)
+void WM8940_Set_PGA_Volume(WM8940_t* wm8940, uint8_t regval)
 {
     uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL);
     val &= ~(0x003F);
@@ -31,7 +31,7 @@ void WM8940_Set_PGAInput_Volume(WM8940_t* wm8940, uint8_t regval)
 }
 
 // TODO
-void WM8940_Set_PGAInput_Volume_db(WM8940_t* wm8940, float vol_db)
+void WM8940_Set_PGA_Volume_db(WM8940_t* wm8940, float vol_db)
 {
     if (vol_db < -12)
         vol_db = -12;
@@ -43,7 +43,7 @@ void WM8940_Set_PGAInput_Volume_db(WM8940_t* wm8940, float vol_db)
     uint8_t regval = (vol_db + 12) / 0.75;
 }
 
-void WM8940_Set_PGAInput_Mute(WM8940_t* wm8940, uint8_t state)
+void WM8940_Set_PGA_Mute(WM8940_t* wm8940, uint8_t state)
 {
     uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL);
     val &= ~(1 << 6);
@@ -51,7 +51,7 @@ void WM8940_Set_PGAInput_Mute(WM8940_t* wm8940, uint8_t state)
     WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL, val);
 }
 
-void WM8940_Set_PGAInput_ZeroCross(WM8940_t* wm8940, uint8_t state)
+void WM8940_Set_PGA_ZeroCross(WM8940_t* wm8940, uint8_t state)
 {
     uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL);
     val &= ~(1 << 7);
@@ -59,7 +59,7 @@ void WM8940_Set_PGAInput_ZeroCross(WM8940_t* wm8940, uint8_t state)
     WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL, val);
 }
 
-void WM8940_Set_PGAInput_Enable(WM8940_t* wm8940, uint8_t state)
+void WM8940_Set_PGA_Enable(WM8940_t* wm8940, uint8_t state)
 {
     uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_POWER_MANAGEMENT_2);
     val &= ~(1 << 2);

@@ -28,13 +28,13 @@ typedef enum _wm8940_status
 
 
 // Input signal path
-wm8940_input_t WM8940_Get_PGAInput(WM8940_t* wm8940);
-void WM8940_Set_PGAInput(WM8940_t* wm8940, wm8940_input_t input);
-uint8_t WM8940_Get_PGAInput_Volume(WM8940_t* wm8940);
-void WM8940_Set_PGAInput_Volume(WM8940_t* wm8940, uint8_t vol);
-void WM8940_Set_PGAInput_Mute(WM8940_t* wm8940, uint8_t state);
-void WM8940_Set_PGAInput_ZeroCross(WM8940_t* wm8940, uint8_t state);
-void WM8940_Set_PGAInput_Enable(WM8940_t* wm8940, uint8_t state);
+wm8940_input_t WM8940_Get_PGA_Input(WM8940_t* wm8940);
+void WM8940_Set_PGA_Input(WM8940_t* wm8940, wm8940_input_t input);
+uint8_t WM8940_Get_PGA_Volume(WM8940_t* wm8940);
+void WM8940_Set_PGA_Volume(WM8940_t* wm8940, uint8_t vol);
+void WM8940_Set_PGA_Mute(WM8940_t* wm8940, uint8_t state);
+void WM8940_Set_PGA_ZeroCross(WM8940_t* wm8940, uint8_t state);
+void WM8940_Set_PGA_Enable(WM8940_t* wm8940, uint8_t state);
 void WM8940_Set_Aux_Enable(WM8940_t* wm8940, uint8_t state);
 void WM8940_Set_Aux_Mode(WM8940_t* wm8940, wm8940_aux_mode_t mode);
 void WM8940_Set_PGA_Boost(WM8940_t* wm8940, uint8_t state);
