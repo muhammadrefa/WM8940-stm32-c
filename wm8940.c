@@ -1,6 +1,39 @@
 #include "wm8940.h"
 #include "wm8940_regs.h"
 
+
+// TODO: WM8940 init
+void WM8940_Init(WM8940_t* wm8940)
+{
+    // Datasheet page 64
+    WM8940_SoftwareReset(wm8940);
+    // Enable VMID_OP_EN and LVLSHIFT_EN
+    // Enable DAC soft mute
+    // Set clock source
+    // Enable POB_CTRL and VMID soft start
+}
+
+// TODO: WM8940 deinit
+void WM8940_Deinit(WM8940_t* wm8940)
+{
+    // Datasheet page 65
+}
+
+void WM8940_SoftwareReset(WM8940_t* wm8940)
+{
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_SOFTWARE_RESET, 0);
+}
+
+uint8_t WM8940_Get_ChipID(WM8940_t* wm8940)
+{
+    return WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_SOFTWARE_RESET);
+}
+
+uint8_t WM8940_Get_DeviceRevision(WM8940_t* wm8940)
+{
+    return WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_POWER_MANAGEMENT_1) & 0x03;
+}
+
 /* ----- Input signal path ----- */
 wm8940_input_t WM8940_Get_PGA_Input(WM8940_t* wm8940)
 {

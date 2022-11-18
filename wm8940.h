@@ -27,6 +27,11 @@ typedef enum _wm8940_status
 } wm8940_status_t;
 
 
+void WM8940_Init(WM8940_t* wm8940);
+void WM8940_Deinit(WM8940_t* wm8940);
+void WM8940_SoftwareReset(WM8940_t* wm8940);
+uint8_t WM8940_Get_ChipID(WM8940_t* wm8940);
+uint8_t WM8940_Get_DeviceRevision(WM8940_t* wm8940);
 // Input signal path
 wm8940_input_t WM8940_Get_PGA_Input(WM8940_t* wm8940);
 void WM8940_Set_PGA_Input(WM8940_t* wm8940, wm8940_input_t input);
