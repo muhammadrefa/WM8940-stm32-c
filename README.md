@@ -14,7 +14,7 @@ _WIP (Work In Progress)_
     - [X] Auxiliary input
     - [X] Input boost
     - [X] Microphone biasing
-- [X] Analogue to Digital Converter (ADC)
+- [ ] Analogue to Digital Converter (ADC)
     - [X] High pass filter
     - [ ] Notch filter
     - [X] Digital ADC volume control
@@ -34,8 +34,12 @@ _WIP (Work In Progress)_
     - [ ] Thermal shutdown
 - [X] Digital audio interfaces
     - [X] Audio interface control
+    - [X] (ADC & DAC) Loopback
 - [X] Audio sample rates
 - [ ] Master clock and Phase Locked Loop (PLL)
+    - [X] Enable PLL
+    - [X] Set PLL power
+    - [ ] Set PLL frequency
 - [X] Companding
 - [X] General Purpose Input/Output
 - [ ] Control interface
