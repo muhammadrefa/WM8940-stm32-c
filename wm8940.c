@@ -247,8 +247,8 @@ void WM8940_Set_Output_Enable(WM8940_t* wm8940, wm8940_output_t output)
 {
     uint16_t val = 0;
     if (output == WM8940_OUTPUT_SPK)
-        val |= WM8940_PM3_DAC | WM8940_PM3_SPKMIX | WM8940_PM3_SPKP | WM8940_PM3_SPKN;
+        val |= WM8940_PM3_SPKMIX | WM8940_PM3_SPKP | WM8940_PM3_SPKN;
     if (output == WM8940_OUTPUT_MONO)
-        val |= WM8940_PM3_DAC | WM8940_PM3_MONOMIX | WM8940_PM3_MONO;
+        val |= WM8940_PM3_MONOMIX | WM8940_PM3_MONO;
     WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_POWER_MANAGEMENT_3, val);
 }
