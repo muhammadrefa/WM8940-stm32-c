@@ -187,6 +187,13 @@ void WM8940_Set_ADC_HighPassFilter(WM8940_t* wm8940, uint8_t enable, wm8940_hpf_
     WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_ADC_CTRL, val);
 }
 
+void WM8940_Set_ADC_Volume(WM8940_t* wm8940, uint8_t regval)
+{
+    uint16_t val = 0;
+    val |= (regval & 0xFF) << 0;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_ADC_DIGITAL_VOL, val);
+}
+
 /* ----- DAC ----- */
 void WM8940_Set_DAC_Enable(WM8940_t* wm8940, uint8_t state)
 {

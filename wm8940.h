@@ -54,6 +54,8 @@ void WM8940_Set_MicBias_Voltage(WM8940_t* wm8940, wm8940_micbias_voltage_t perce
 void WM8940_Set_ADC_Enable(WM8940_t* wm8940, uint8_t state);
 void WM8940_Set_ADC_Polarity(WM8940_t* wm8940, uint8_t invert);
 void WM8940_Set_ADC_HighPassFilter(WM8940_t* wm8940, uint8_t enable, wm8940_hpf_mode_t mode, uint8_t freq_regval);
+void WM8940_Set_ADC_Volume(WM8940_t* wm8940, uint8_t regval);
+void WM8940_Set_ADC_Volume_db(WM8940_t* wm8940, float vol_db);  // TODO
 
 // DAC
 void WM8940_Set_DAC_Enable(WM8940_t* em8940, uint8_t state);
