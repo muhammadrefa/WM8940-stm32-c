@@ -15,7 +15,8 @@
 typedef struct _WM8940
 {
     uint32_t i2c_handle;
-    uint8_t _volume;
+    uint8_t _vmid_sel;
+    uint8_t _bufioen;
 } WM8940_t;
 
 
@@ -27,11 +28,12 @@ typedef enum _wm8940_status
 } wm8940_status_t;
 
 
+// Private functions
+uint16_t _WM8940_Get_PowerManagement1(WM8940_t* wm8940);
+
 void WM8940_Init(WM8940_t* wm8940);
 void WM8940_Deinit(WM8940_t* wm8940);
-void WM8940_SoftwareReset(WM8940_t* wm8940);
-uint8_t WM8940_Get_ChipID(WM8940_t* wm8940);
-uint8_t WM8940_Get_DeviceRevision(WM8940_t* wm8940);
+
 // Input signal path
 wm8940_input_t WM8940_Get_PGA_Input(WM8940_t* wm8940);
 void WM8940_Set_PGA_Input(WM8940_t* wm8940, wm8940_input_t input);
@@ -50,10 +52,16 @@ void WM8940_Set_MicBias_Voltage(WM8940_t* wm8940, wm8940_micbias_voltage_t perce
 
 // ADC
 void WM8940_Set_ADC_Enable(WM8940_t* wm8940, uint8_t state);
-void WM8940_Set_ADC_Polarity(WM8940_t* wm8940, uint8_t polarity);
-void WM8940_Set_HighPassFilter_Enable(WM8940_t* wm8940, uint8_t state);
-void WM8940_Set_HighPassFilter_Application(WM8940_t* wm8940, uint8_t val);
-void WM8940_Set_HighPassFilter_CutOff(WM8940_t* wm8940, uint8_t freq);
+void WM8940_Set_ADC_Polarity(WM8940_t* wm8940, uint8_t invert);
+void WM8940_Set_ADC_HighPassFilter(WM8940_t* wm8940, uint8_t enable, wm8940_hpf_mode_t mode, uint8_t freq_regval);
+
+// DAC
+void WM8940_Set_DAC_Enable(WM8940_t* em8940, uint8_t state);
+void WM8940_Set_DAC_Polarity(WM8940_t* wm8940, uint8_t invert);
+void WM8940_Set_DAC_Volume(WM8940_t* wm8940, uint8_t regval);
+void WM8940_Set_DAC_Volume_db(WM8940_t* wm8940, float vol_db);  // TODO
+void WM8940_Set_DAC_Mute(WM8940_t* wm8940, uint8_t state);
+void WM8940_Set_DAC_AutoMute(WM8940_t* wm8940, uint8_t state);
 
 // Analogue outputs
 void WM8940_Set_Speaker_Source(WM8940_t* wm8940, wm8940_speaker_source_t source);
@@ -66,5 +74,36 @@ void WM8940_Set_Mono_Source(WM8940_t* wm8940, wm8940_speaker_source_t source);
 void WM8940_Set_Mono_FromBypass_Attenuation(WM8940_t* wm8940, uint8_t state);
 void WM8940_Set_Mono_Mute(WM8940_t* wm8940, uint8_t state);
 void WM8940_Set_Output_Enable(WM8940_t* wm8940, wm8940_output_t output);
+
+// Digital audio interfaces
+void WM8940_Set_Clock(WM8940_t* wm8940, uint8_t is_master, wm8940_bclkdiv_t bclk_divider, wm8940_mclkdiv_t mclk_divider, wm8940_clksel_t clock_source);
+void WM8940_Set_AudioInterfaceFormat(WM8940_t* wm8940, wm8940_audio_iface_fmt_t format);
+
+// Audio sample rates
+void WM8940_Set_SampleRate(WM8940_t* wm8940, wm8940_sample_rate_t sample_rate);
+
+// Master clock and PLL
+void WM8940_Set_PLL_Enable(WM8940_t* wm8940, uint8_t state);
+void WM8940_Set_PLL_PowerDown(WM8940_t* wm8940, uint8_t state);
+
+// Companding
+void WM8940_Set_ADC_Companding(WM8940_t* wm8940, wm8940_companding_t companding);
+void WM8940_Set_DAC_Companding(WM8940_t* wm8940, wm8940_companding_t companding);
+void WM8940_Set_ADC_Loopback(WM8940_t* wm8940, uint8_t state);
+void WM8940_Set_DAC_Loopback(WM8940_t* wm8940, uint8_t state);
+
+// GPIO control
+void WM8940_Set_GPIO_Control(WM8940_t* wm8940, wm8940_gpio_function_t function, uint8_t invert_polarity);
+
+// Control interface
+void WM8940_Set_ModePin_Function(WM8940_t* wm8940, wm8940_mode_pin_function_t function);
+
+// Readback registers
+uint8_t WM8940_Get_ChipID(WM8940_t* wm8940);
+uint8_t WM8940_Get_DeviceRevision(WM8940_t* wm8940);
+uint8_t WM8940_Get_ALC_Gain(WM8940_t* wm8940);
+
+// Reset
+void WM8940_SoftwareReset(WM8940_t* wm8940);
 
 #endif // MR_WM8940_H

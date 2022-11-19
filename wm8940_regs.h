@@ -13,7 +13,7 @@ typedef enum _wm8940_register
     WM8940_REG_COMPANDING_CTRL = 5,
     WM8940_REG_CLOCK_GEN_CTRL = 6,
     WM8940_REG_ADDITIONAL_CTRL = 7,
-    WM8940_REG_GPIO = 8,
+    WM8940_REG_GPIO_CTRL = 8,
     WM8940_REG_CONTROL_INTERFACE = 9,
     WM8940_REG_DAC_CTRL = 10,
     WM8940_REG_DAC_DIGITAL_VOL = 11,
@@ -75,6 +75,12 @@ typedef enum _wm8940_micbias_voltage
     WM8940_MICBIAS_65PERCENT = (1 << 8)
 } wm8940_micbias_voltage_t;
 
+typedef enum _wm8940_hpf_mode
+{
+    WM8940_HPF_MODE_AUDIO = 0,
+    WM8940_HPF_MODE_APP = 1
+} wm8940_hpf_mode_t;
+
 typedef enum _wm8940_output_source
 {
     WM8940_OUTPUT_FROM_NONE = 0,
@@ -100,5 +106,74 @@ typedef enum _wm8940_power_management_3
     WM8940_PM3_SPKN = (1 << 6),
     WM8940_PM3_MONO = (1 << 7)
 } wm8940_pm3_t;
+
+typedef enum _wm8940_audio_iface_fmt
+{
+    WM8940_AUDIO_IFACE_FMT_RIGHT_JUSTIFIED = 0,
+    WM8940_AUDIO_IFACE_FMT_LEFT_JUSTIFIED = 1,
+    WM8940_AUDIO_IFACE_FMT_I2S = 2,
+    WM8940_AUDIO_IFACE_FMT_PCM_DSP = 3
+} wm8940_audio_iface_fmt_t;
+
+typedef enum _wm8940_bclkdiv
+{
+    WM8940_BCLKDIV_1 = 0,
+    WM8940_BCLKDIV_2 = 1,
+    WM8940_BCLKDIV_4 = 2,
+    WM8940_BCLKDIV_8 = 3,
+    WM8940_BCLKDIV_16 = 4,
+    WM8940_BCLKDIV_32 = 5 
+} wm8940_bclkdiv_t;
+
+typedef enum _wm8940_mclkdiv
+{
+    WM8940_MCLKDIV_1 = 0,
+    WM8940_MCLKDIV_1HALF = 1,
+    WM8940_MCLKDIV_2 = 2,
+    WM8940_MCLKDIV_3 = 3,
+    WM8940_MCLKDIV_4 = 4,
+    WM8940_MCLKDIV_6 = 5,
+    WM8940_MCLKDIV_8 = 6,
+    WM8940_MCLKDIV_12 = 7
+} wm8940_mclkdiv_t;
+
+typedef enum _wm8940_clksel
+{
+    WM8940_CLKSEL_MCLK = 0,
+    WM8940_CLKSEL_PLL = 1
+} wm8940_clksel_t;
+
+typedef enum _wm8940_sample_rate
+{
+    WM8940_SAMPLERATE_48KHZ = 0,
+    WM8940_SAMPLERATE_32KHZ = 1,
+    WM8940_SAMPLERATE_24KHZ = 2,
+    WM8940_SAMPLERATE_16KHZ = 3,
+    WM8940_SAMPLERATE_12KHZ = 4,
+    WM8940_SAMPLERATE_8KHZ = 5,
+} wm8940_sample_rate_t;
+
+typedef enum _wm8940_companding
+{
+    WM8940_COMPANDING_OFF = 0,
+    WM8940_COMPANDING_ALAW = 2,
+    WM8940_COMPANDING_ULAW = 3
+} wm8940_companding_t;
+
+typedef enum _wm8940_gpio_function
+{
+    WM8940_GPIO_FUNCTION_CSB_INPUT = 0,
+    WM8940_GPIO_FUNCTION_JACK_DETECT = 1,
+    WM8940_GPIO_FUNCTION_TEMP_OK = 2,
+    WM8940_GPIO_FUNCTION_AMUTE_ACTIVE = 3,
+    WM8940_GPIO_FUNCTION_SYSCLK_CLOCK_OUTPUT = 4,
+    WM8940_GPIO_FUNCTION_PLL_LOCK = 5
+} wm8940_gpio_function_t;
+
+typedef enum _wm8940_mode_pin_function
+{
+    WM8940_MODE_AS_MODE_SELECTOR = 0,
+    WM8940_MODE_AS_GPIO = 1
+} wm8940_mode_pin_function_t;
 
 #endif // MR_WM8940_REGS_H
