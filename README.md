@@ -45,7 +45,7 @@ _WIP (Work In Progress)_
 - [ ] Control interface
     - [X] Selection of control mode
     - [ ] Auto-incremental write setting
-    - [ ] Readback
+    - [X] Readback
 - [X] Resetting the chip
 - [ ] Power supplies
     - [ ] Power up sequence
