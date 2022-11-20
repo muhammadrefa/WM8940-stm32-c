@@ -17,6 +17,8 @@ typedef struct _WM8940
     uint32_t i2c_handle;
     uint8_t _vmid_sel;
     uint8_t _bufioen;
+    uint8_t _vol_pga;
+    uint8_t _vol_spk;
 } WM8940_t;
 
 
@@ -37,7 +39,8 @@ wm8940_status_t WM8940_Deinit(WM8940_t* wm8940);
 // Input signal path
 wm8940_status_t WM8940_Get_PGA_Input(WM8940_t* wm8940, wm8940_input_t* input);
 wm8940_status_t WM8940_Set_PGA_Input(WM8940_t* wm8940, wm8940_input_t input);
-wm8940_status_t WM8940_Get_PGA_Volume(WM8940_t* wm8940, uint8_t* volume);
+uint8_t WM8940_Get_PGA_Volume(WM8940_t* wm8940);
+wm8940_status_t _WM8940_Get_PGA_Volume(WM8940_t* wm8940, uint8_t* volume);
 wm8940_status_t WM8940_Set_PGA_Volume(WM8940_t* wm8940, uint8_t vol);
 wm8940_status_t WM8940_Set_PGA_Mute(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_PGA_ZeroCross(WM8940_t* wm8940, uint8_t state);
@@ -72,6 +75,8 @@ wm8940_status_t WM8940_Set_Speaker_ZeroCross(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_Speaker_Mute(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_Speaker_Volume(WM8940_t* wm8940, uint8_t regval);
 wm8940_status_t WM8940_Set_Speaker_Volume_db(WM8940_t* wm8940, int8_t vol_db);
+uint8_t WM8940_Get_Speaker_Volume_db(WM8940_t* wm8940);
+wm8940_status_t _WM8940_Get_Speaker_Volume(WM8940_t* wm8940, uint8_t* val);
 wm8940_status_t WM8940_Set_Mono_Source(WM8940_t* wm8940, wm8940_speaker_source_t source);
 wm8940_status_t WM8940_Set_Mono_FromBypass_Attenuation(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_Mono_Mute(WM8940_t* wm8940, uint8_t state);

@@ -47,19 +47,13 @@ wm8940_status_t WM8940_Set_PGA_Input(WM8940_t* wm8940, wm8940_input_t input)
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Get_PGA_Volume(WM8940_t* wm8940, uint8_t* volume)
+wm8940_status_t WM8940_Set_PGA_Volume(WM8940_t* wm8940, uint8_t val)
 {
-    uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL);
-    *volume = val & 0x003F;
-    return WM8940_STATUS_OK;
-}
-
-wm8940_status_t WM8940_Set_PGA_Volume(WM8940_t* wm8940, uint8_t regval)
-{
-    uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL);
-    val &= ~(0x003F);
-    val |= (regval & 0x003F);
-    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL, val);
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL);
+    regval &= ~(0x003F);
+    regval |= (val & 0x003F);
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL, regval);
+    wm8940->_vol_pga = val;
     return WM8940_STATUS_OK;
 }
 
@@ -71,9 +65,26 @@ wm8940_status_t WM8940_Set_PGA_Volume_db(WM8940_t* wm8940, float vol_db)
     else if (vol_db >= 35.25)
         return WM8940_STATUS_INVALID;
 
-    // Round to floor by 0.25
-    // Convert to regval
-    uint8_t regval = (vol_db + 12) / 0.75;
+    // Round to floor by 0.75
+    int16_t rounding = vol_db * 100;
+    rounding %= 75;
+    if (rounding < 0)
+        rounding += 75;
+    vol_db -= rounding / 100.0;
+    // Convert to val for register
+    uint8_t val = (vol_db + 12) / 0.75;
+    return WM8940_Set_PGA_Volume(wm8940, val);
+}
+
+uint8_t WM8940_Get_PGA_Volume(WM8940_t* wm8940)
+{
+    return wm8940->_vol_pga;
+}
+
+wm8940_status_t _WM8940_Get_PGA_Volume(WM8940_t* wm8940, uint8_t* val)
+{
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL);
+    *val = regval & 0x003F;
     return WM8940_STATUS_OK;
 }
 
@@ -306,12 +317,13 @@ wm8940_status_t WM8940_Set_Speaker_Mute(WM8940_t* wm8940, uint8_t state)
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_Speaker_Volume(WM8940_t* wm8940, uint8_t regval)
+wm8940_status_t WM8940_Set_Speaker_Volume(WM8940_t* wm8940, uint8_t val)
 {
-    uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_SPK_VOL_CTRL);
-    val &= ~(0x3F << 0);
-    val |= (regval & 0x3F) << 0;
-    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_SPK_VOL_CTRL, val);
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_SPK_VOL_CTRL);
+    regval &= ~(0x3F << 0);
+    regval |= (val & 0x3F) << 0;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_SPK_VOL_CTRL, regval);
+    wm8940->_vol_spk = val;
     return WM8940_STATUS_OK;
 }
 
@@ -321,9 +333,20 @@ wm8940_status_t WM8940_Set_Speaker_Volume_db(WM8940_t* wm8940, int8_t vol_db)
         return WM8940_STATUS_INVALID;
     else if (vol_db >= 6)
         return WM8940_STATUS_INVALID;
-    uint8_t regval = WM8940_VOL_DB_TO_REG_VALUE(vol_db);
 
-    WM8940_Set_Speaker_Volume(wm8940, regval);
+    return WM8940_Set_Speaker_Volume(wm8940, WM8940_VOL_DB_TO_REG_VALUE(vol_db));
+}
+
+uint8_t WM8940_Get_Speaker_Volume_db(WM8940_t* wm8940)
+{
+    return WM8940_SPKVOL_REG_VALUE_TO_DB(wm8940->_vol_spk);
+}
+
+wm8940_status_t _WM8940_Get_Speaker_Volume(WM8940_t* wm8940, uint8_t* val)
+{
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_SPK_VOL_CTRL);
+    regval &= 0x3F;
+    *val = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -408,7 +431,7 @@ wm8940_status_t WM8940_Set_PLL_Enable(WM8940_t* wm8940, uint8_t state)
 {
     if (state && !wm8940->_vmid_sel)
         return WM8940_STATUS_INVALID;
-        
+
     uint16_t val;
     wm8940_status_t status;
     status = _WM8940_Get_PowerManagement1(wm8940, &val);
