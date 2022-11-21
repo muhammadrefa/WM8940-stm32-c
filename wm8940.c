@@ -233,6 +233,62 @@ wm8940_status_t WM8940_Set_ADC_Volume(WM8940_t* wm8940, uint8_t regval)
     return WM8940_STATUS_OK;
 }
 
+/* ----- ALC ----- */
+wm8940_status_t WM8940_Set_ALC_Enable(WM8940_t* wm8940, uint8_t state)
+{
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_1);
+    regval &= ~(1 << 8);
+    regval |= (state ? 1 : 0) << 8;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_1, regval);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_ALC_Gain(WM8940_t* wm8940, uint8_t minval, uint8_t maxval)
+{
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_1);
+    regval &= ~(0x3F << 0);
+    regval |= (minval & 0x07) << 0;
+    regval |= (maxval & 0x07) << 3;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_1, regval);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_ALC_Level(WM8940_t* wm8940, uint8_t val)
+{
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_2);
+    regval &= ~(0x0F << 0);
+    regval |= (val & 0x0F) << 0;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_2, regval);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_ALC_Hold(WM8940_t* wm8940, uint8_t val)
+{
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_2);
+    regval &= ~(0x0F << 4);
+    regval |= (val & 0x0F) << 4;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_2, regval);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_ALC_Mode(WM8940_t* wm8940, wm8940_alc_mode_t mode)
+{
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_3);
+    regval &= ~(1 << 8);
+    regval |= (mode & 0x01) << 8;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_3, regval);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_ALC_ZeroCross(WM8940_t* wm8940, uint8_t state)
+{
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_4);
+    regval &= ~(1 << 1);
+    regval |= (state ? 1 : 0) << 1;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_4, regval);
+    return WM8940_STATUS_OK;
+}
+
 /* ----- DAC ----- */
 wm8940_status_t WM8940_Set_DAC_Enable(WM8940_t* wm8940, uint8_t state)
 {

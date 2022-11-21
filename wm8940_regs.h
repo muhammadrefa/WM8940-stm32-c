@@ -81,6 +81,12 @@ typedef enum _wm8940_hpf_mode
     WM8940_HPF_MODE_APP = 1
 } wm8940_hpf_mode_t;
 
+typedef enum _wm8940_alc_mode
+{
+    WM8940_ALC_MODE_NORMAL = 0,
+    WM8940_ALC_MODE_LIMITER = 1
+} wm8940_alc_mode_t;
+
 typedef enum _wm8940_output_source
 {
     WM8940_OUTPUT_FROM_NONE = 0,

@@ -19,6 +19,12 @@ _WIP (Work In Progress)_
     - [ ] Notch filter
     - [X] Digital ADC volume control
 - [ ] Input limiter/Automatic Level Control (ALC)
+    - [X] Operation mode (Normal/Limiter)
+    - [ ] Attack and decay times
+    - [X] Minimum and maximum gain
+    - [X] Hold time and ALC level
+    - [ ] Noise gate
+    - [X] ALC zero cross
 - [ ] Output signal path
     - [X] Hi-Fi DAC volume control
     - [X] Hi-Fi Digital to Analogue Converter (DAC)

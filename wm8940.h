@@ -60,6 +60,14 @@ wm8940_status_t WM8940_Set_ADC_HighPassFilter(WM8940_t* wm8940, uint8_t enable, 
 wm8940_status_t WM8940_Set_ADC_Volume(WM8940_t* wm8940, uint8_t regval);
 wm8940_status_t WM8940_Set_ADC_Volume_db(WM8940_t* wm8940, float vol_db);  // TODO
 
+// ALC
+wm8940_status_t WM8940_Set_ALC_Enable(WM8940_t* wm8940, uint8_t state);
+wm8940_status_t WM8940_Set_ALC_Gain(WM8940_t* wm8940, uint8_t minval, uint8_t maxval);
+wm8940_status_t WM8940_Set_ALC_Level(WM8940_t* wm8940, uint8_t val);
+wm8940_status_t WM8940_Set_ALC_Hold(WM8940_t* wm8940, uint8_t val);
+wm8940_status_t WM8940_Set_ALC_Mode(WM8940_t* wm8940, wm8940_alc_mode_t mode);
+wm8940_status_t WM8940_Set_ALC_ZeroCross(WM8940_t* wm8940, uint8_t state);
+
 // DAC
 wm8940_status_t WM8940_Set_DAC_Enable(WM8940_t* em8940, uint8_t state);
 wm8940_status_t WM8940_Set_DAC_Polarity(WM8940_t* wm8940, uint8_t invert);
