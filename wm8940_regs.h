@@ -182,4 +182,12 @@ typedef enum _wm8940_mode_pin_function
     WM8940_MODE_AS_GPIO = 1
 } wm8940_mode_pin_function_t;
 
+typedef enum _wm8940_vmid_impedance
+{
+    WM8940_VMID_IMPEDANCE_OPEN = 0,
+    WM8940_VMID_IMPEDANCE_50K = 1,
+    WM8940_VMID_IMPEDANCE_250K = 2,
+    WM8940_VMID_IMPEDANCE_5K = 3
+} wm8940_vmid_impedance_t;
+
 #endif // MR_WM8940_REGS_H
