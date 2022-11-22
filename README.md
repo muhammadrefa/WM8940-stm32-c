@@ -20,7 +20,7 @@ _WIP (Work In Progress)_
     - [X] Digital ADC volume control
 - [ ] Input limiter/Automatic Level Control (ALC)
     - [X] Operation mode (Normal/Limiter)
-    - [ ] Attack and decay times
+    - [X] Attack and decay times
     - [X] Minimum and maximum gain
     - [X] Hold time and ALC level
     - [ ] Noise gate
@@ -36,8 +36,8 @@ _WIP (Work In Progress)_
     - [ ] Zero cross timeout
     - [X] Enabling the outputs
     - [ ] Unused analogue inputs/outputs
-- [ ] Output switch
-    - [ ] Thermal shutdown
+- [X] Output switch
+    - [X] Thermal shutdown
 - [X] Digital audio interfaces
     - [X] Audio interface control
     - [X] (ADC & DAC) Loopback
@@ -53,10 +53,7 @@ _WIP (Work In Progress)_
     - [ ] Auto-incremental write setting
     - [X] Readback
 - [X] Resetting the chip
-- [ ] Power supplies
-    - [ ] Power up sequence
-    - [ ] Power down sequence
-- [ ] Power management
-    - [ ] VMID control
-    - [ ] BIASEN control
-- [ ] Pop minimisation
+- [X] Power management
+    - [X] VMID control
+    - [X] BIASEN control
+- [ ] POP minimisation
