@@ -1,7 +1,7 @@
 WM8940 audio codec library for STM32
 ======================================
 
-_WIP (Work In Progress)_
+WIP (Work In Progress) and untested
 
 ### Useful links:
 - Product page: https://www.cirrus.com/products/wm8940/
