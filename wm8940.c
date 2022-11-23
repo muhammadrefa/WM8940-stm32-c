@@ -2,6 +2,12 @@
 #include "wm8940_regs.h"
 
 
+// Private function prototypes
+wm8940_status_t _WM8940_Get_PowerManagement1(WM8940_t* wm8940, uint16_t* regval);
+wm8940_status_t _WM8940_Get_PGA_Volume(WM8940_t* wm8940, uint8_t* volume);
+wm8940_status_t _WM8940_Get_Speaker_Volume(WM8940_t* wm8940, uint8_t* val);
+
+
 wm8940_status_t _WM8940_Get_PowerManagement1(WM8940_t* wm8940, uint16_t* regval)
 {
     uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_POWER_MANAGEMENT_1);
@@ -12,7 +18,6 @@ wm8940_status_t _WM8940_Get_PowerManagement1(WM8940_t* wm8940, uint16_t* regval)
     return WM8940_STATUS_OK;
 }
 
-// TODO: WM8940 init
 wm8940_status_t WM8940_Init(WM8940_t* wm8940)
 {
     // Datasheet page 64
@@ -41,6 +46,9 @@ wm8940_status_t WM8940_Set_PGA_Input(WM8940_t* wm8940, wm8940_input_t input)
 
 wm8940_status_t WM8940_Set_PGA_Volume(WM8940_t* wm8940, uint8_t val)
 {
+    if (val > 0x3F)
+        return WM8940_STATUS_INVALID;
+
     uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_INPPGA_GAIN_CTRL);
     regval &= ~(0x003F);
     regval |= (val & 0x003F);
@@ -49,7 +57,6 @@ wm8940_status_t WM8940_Set_PGA_Volume(WM8940_t* wm8940, uint8_t val)
     return WM8940_STATUS_OK;
 }
 
-// TODO
 wm8940_status_t WM8940_Set_PGA_Volume_db(WM8940_t* wm8940, float vol_db)
 {
     if (vol_db < -12)
@@ -140,6 +147,9 @@ wm8940_status_t WM8940_Set_PGA_Boost(WM8940_t* wm8940, uint8_t state)
 
 wm8940_status_t WM8940_Set_Boost_Volume(WM8940_t* wm8940, wm8940_input_t input, uint8_t vol)
 {
+    if (vol > 0x07)
+        return WM8940_STATUS_INVALID;
+
     int8_t shift = -1;
     switch (input)
     {
@@ -208,6 +218,9 @@ wm8940_status_t WM8940_Set_ADC_Polarity(WM8940_t* wm8940, uint8_t invert)
 
 wm8940_status_t WM8940_Set_ADC_HighPassFilter(WM8940_t* wm8940, uint8_t enable, wm8940_hpf_mode_t mode, uint8_t freq_regval)
 {
+    if (freq_regval > 0x07)
+        return WM8940_STATUS_INVALID;
+
     uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ADC_CTRL);
     val &= ~(0x1F << 4);
     val |= (enable ? 1 : 0) << 8;
@@ -219,6 +232,9 @@ wm8940_status_t WM8940_Set_ADC_HighPassFilter(WM8940_t* wm8940, uint8_t enable, 
 
 wm8940_status_t WM8940_Set_ADC_Volume(WM8940_t* wm8940, uint8_t regval)
 {
+    if (regval > 0xFF)
+        return WM8940_STATUS_INVALID;
+
     uint16_t val = 0;
     val |= (regval & 0xFF) << 0;
     WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_ADC_DIGITAL_VOL, val);
@@ -237,6 +253,9 @@ wm8940_status_t WM8940_Set_ALC_Enable(WM8940_t* wm8940, uint8_t state)
 
 wm8940_status_t WM8940_Set_ALC_Gain(WM8940_t* wm8940, uint8_t minval, uint8_t maxval)
 {
+    if ((minval > 0x07) || (maxval > 0x07))
+        return WM8940_STATUS_INVALID;
+
     uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_1);
     regval &= ~(0x3F << 0);
     regval |= (minval & 0x07) << 0;
@@ -247,6 +266,9 @@ wm8940_status_t WM8940_Set_ALC_Gain(WM8940_t* wm8940, uint8_t minval, uint8_t ma
 
 wm8940_status_t WM8940_Set_ALC_Level(WM8940_t* wm8940, uint8_t val)
 {
+    if (val > 0x0F)
+        return WM8940_STATUS_INVALID;
+    
     uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_2);
     regval &= ~(0x0F << 0);
     regval |= (val & 0x0F) << 0;
@@ -256,6 +278,9 @@ wm8940_status_t WM8940_Set_ALC_Level(WM8940_t* wm8940, uint8_t val)
 
 wm8940_status_t WM8940_Set_ALC_Hold(WM8940_t* wm8940, uint8_t val)
 {
+    if (val > 0x0F)
+        return WM8940_STATUS_INVALID;
+    
     uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_2);
     regval &= ~(0x0F << 4);
     regval |= (val & 0x0F) << 4;
@@ -274,6 +299,9 @@ wm8940_status_t WM8940_Set_ALC_Mode(WM8940_t* wm8940, wm8940_alc_mode_t mode)
 
 wm8940_status_t WM8940_Set_ALC_DecayTime(WM8940_t* wm8940, uint8_t val)
 {
+    if (val > 0x0F)
+        return WM8940_STATUS_INVALID;
+    
     uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_3);
     regval &= ~(0x0F << 4);
     regval |= (val & 0x0F) << 4;
@@ -282,6 +310,9 @@ wm8940_status_t WM8940_Set_ALC_DecayTime(WM8940_t* wm8940, uint8_t val)
 }
 wm8940_status_t WM8940_Set_ALC_AttackTime(WM8940_t* wm8940, uint8_t val)
 {
+    if (val > 0x0F)
+        return WM8940_STATUS_INVALID;
+    
     uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_3);
     regval &= ~(0x0F << 0);
     regval |= (val & 0x0F) << 0;
@@ -295,6 +326,27 @@ wm8940_status_t WM8940_Set_ALC_ZeroCross(WM8940_t* wm8940, uint8_t state)
     regval &= ~(1 << 1);
     regval |= (state ? 1 : 0) << 1;
     WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_ALC_CTRL_4, regval);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_ALC_NoiseGate_Threshold(WM8940_t* wm8940, uint8_t val)
+{
+    if (val > 7)
+        return WM8940_STATUS_INVALID;
+
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_NOISE_GATE);
+    regval &= ~(0x07 << 0);
+    regval |= (val & 0x07) << 0;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_NOISE_GATE, regval);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_ALC_NoiseGate_Enable(WM8940_t* wm8940, uint8_t state)
+{
+    uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_NOISE_GATE);
+    regval &= ~(1 << 3);
+    regval |= (state ? 1 : 0) << 3;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_NOISE_GATE, regval);
     return WM8940_STATUS_OK;
 }
 
@@ -384,6 +436,9 @@ wm8940_status_t WM8940_Set_Speaker_Mute(WM8940_t* wm8940, uint8_t state)
 
 wm8940_status_t WM8940_Set_Speaker_Volume(WM8940_t* wm8940, uint8_t val)
 {
+    if (val > 0x3F)
+        return WM8940_STATUS_INVALID;
+
     uint16_t regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_SPK_VOL_CTRL);
     regval &= ~(0x3F << 0);
     regval |= (val & 0x3F) << 0;
@@ -400,6 +455,11 @@ wm8940_status_t WM8940_Set_Speaker_Volume_db(WM8940_t* wm8940, int8_t vol_db)
         return WM8940_STATUS_INVALID;
 
     return WM8940_Set_Speaker_Volume(wm8940, WM8940_VOL_DB_TO_REG_VALUE(vol_db));
+}
+
+uint8_t WM8940_Get_Speaker_Volume(WM8940_t* wm8940)
+{
+    return wm8940->_vol_spk;
 }
 
 uint8_t WM8940_Get_Speaker_Volume_db(WM8940_t* wm8940)
@@ -644,5 +704,17 @@ wm8940_status_t WM8940_Set_AnalogueAmplifierBias_Enable(WM8940_t* wm8940, uint8_
     val &= ~(1 << 3);
     val |= (state ? 1 : 0) << 3;
     WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_POWER_MANAGEMENT_1, val);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Get_PowerManagement2(WM8940_t* wm8940, uint16_t* status)
+{
+    *status = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_POWER_MANAGEMENT_2);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Get_PowerManagement3(WM8940_t* wm8940, uint16_t* status)
+{
+    *status = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_POWER_MANAGEMENT_3);
     return WM8940_STATUS_OK;
 }

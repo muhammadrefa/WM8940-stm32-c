@@ -102,12 +102,18 @@ typedef enum _wm8940_output
     WM8940_OUTPUT_MONO = 2
 } wm8940_output_t;
 
+typedef enum _wm8940_power_management_2
+{
+    WM8940_PM2_ADC = (1 << 0),
+    WM8940_PM2_PGA = (1 << 2),
+    WM8940_PM2_BOOST = (1 << 4)
+} wm8940_pm2_t;
+
 typedef enum _wm8940_power_management_3
 {
     WM8940_PM3_DAC = (1 << 0),
     WM8940_PM3_SPKMIX = (1 << 2),
     WM8940_PM3_MONOMIX = (1 << 3),
-    WM8940_PM3_VBUF = (1 << 4),
     WM8940_PM3_SPKP = (1 << 5),
     WM8940_PM3_SPKN = (1 << 6),
     WM8940_PM3_MONO = (1 << 7)
