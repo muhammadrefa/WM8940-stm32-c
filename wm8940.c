@@ -513,6 +513,15 @@ wm8940_status_t WM8940_Set_Output_Enable(WM8940_t* wm8940, wm8940_output_t outpu
     return WM8940_STATUS_OK;
 }
 
+wm8940_status_t WM8940_Set_VREFToAnalogueOutputResistance(WM8940_t* wm8940, wm8940_vroi_t vroi)
+{
+    uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_OUTPUT_CTRL);
+    val &= ~(1 << 0);
+    val |= (vroi & 0x01) << 0;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_OUTPUT_CTRL, val);
+    return WM8940_STATUS_OK;
+}
+
 /* ----- Output switch ----- */
 wm8940_status_t WM8940_Set_ThermalShutdown_Enable(WM8940_t* wm8940, uint8_t state)
 {

@@ -104,6 +104,12 @@ typedef enum _wm8940_output
     WM8940_OUTPUT_MONO = 2
 } wm8940_output_t;
 
+typedef enum _wm8940_vroi
+{
+    WM8940_VROI_1KOHM = 0,
+    WM8940_VROI_30KOHM = 1
+} wm8940_vroi_t;
+
 typedef enum _wm8940_power_management_2
 {
     WM8940_PM2_ADC = (1 << 0),

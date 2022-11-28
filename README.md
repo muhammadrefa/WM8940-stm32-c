@@ -35,7 +35,7 @@ WIP (Work In Progress) and untested
     - [X] SPKOUTP/SPKOUTN outputs
     - [ ] Zero cross timeout
     - [X] Enabling the outputs
-    - [ ] Unused analogue inputs/outputs
+    - [X] Unused analogue inputs/outputs (VREF to analogue output resistance/VROI)
 - [X] Output switch
     - [X] Thermal shutdown
 - [X] Digital audio interfaces

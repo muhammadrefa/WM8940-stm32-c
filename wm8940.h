@@ -85,6 +85,7 @@ wm8940_status_t WM8940_Set_Mono_Source(WM8940_t* wm8940, wm8940_speaker_source_t
 wm8940_status_t WM8940_Set_Mono_FromBypass_Attenuation(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_Mono_Mute(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_Output_Enable(WM8940_t* wm8940, wm8940_output_t output);
+wm8940_status_t WM8940_Set_VREFToAnalogueOutputResistance(WM8940_t* wm8940, wm8940_vroi_t vroi);
 
 // Output switch
 wm8940_status_t WM8940_Set_ThermalShutdown_Enable(WM8940_t* wm8940, uint8_t state);
