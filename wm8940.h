@@ -124,8 +124,8 @@ wm8940_status_t WM8940_SoftwareReset(WM8940_t* wm8940);
 wm8940_status_t WM8940_Set_VMID_Impedance(WM8940_t* wm8940, wm8940_vmid_impedance_t impedance);
 wm8940_status_t WM8940_Set_AnalogueAmplifierBias_Enable(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Get_PowerManagement2(WM8940_t* wm8940, uint16_t* status);
-wm8940_status_t WM8940_Get_PowerManagement_Input(WM8940_t* wm8940, uint16_t* status) { return WM8940_Get_PowerManagement2(wm8940, status); };
+inline wm8940_status_t WM8940_Get_PowerManagement_Input(WM8940_t* wm8940, uint16_t* status) { return WM8940_Get_PowerManagement2(wm8940, status); };
 wm8940_status_t WM8940_Get_PowerManagement3(WM8940_t* wm8940, uint16_t* status);
-wm8940_status_t WM8940_Get_PowerManagement_Output(WM8940_t* wm8940, uint16_t* status) { return WM8940_Get_PowerManagement3(wm8940, status); };
+inline wm8940_status_t WM8940_Get_PowerManagement_Output(WM8940_t* wm8940, uint16_t* status) { return WM8940_Get_PowerManagement3(wm8940, status); };
 
 #endif // MR_WM8940_H
