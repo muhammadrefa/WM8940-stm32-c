@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define WM8940_I2C_ADDRESS 0x1F
+
 typedef enum _wm8940_register
 {
     WM8940_REG_SOFTWARE_RESET = 0,
