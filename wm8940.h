@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include "wm8940_regs.h"
 
-#define WM8940_I2C_WRITE(handle, reg, val) MyI2C_Write(handle, WM8940_I2C_ADDRESS, reg, val)
-#define WM8940_I2C_READ(handle, reg) MyI2C_Read(handle, WM8940_I2C_ADDRESS, reg)
+#define WM8940_REG_WRITE(handle, reg, val) MyI2C_Write(handle, WM8940_I2C_ADDRESS, reg, val)
+#define WM8940_REG_READ(handle, reg) MyI2C_Read(handle, WM8940_I2C_ADDRESS, reg)
 
 // Volume range: -57 - +6 dB
 #define WM8940_SPKVOL_DB_TO_REG_VALUE(vol_db) ((vol_db + 57) & 0x3F)
@@ -14,7 +14,7 @@
 
 typedef struct _WM8940
 {
-    uint32_t i2c_handle;
+    uint32_t comm_handle;
     wm8940_vmid_impedance_t _vmid_sel;
     uint8_t _bufioen;
     uint8_t _vol_pga;
