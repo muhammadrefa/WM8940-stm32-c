@@ -675,6 +675,15 @@ wm8940_status_t WM8940_Set_ModePin_Function(WM8940_t* wm8940, wm8940_mode_pin_fu
     return WM8940_STATUS_OK;
 }
 
+wm8940_status_t WM8940_Set_AutoIncrementalWrite(WM8940_t* wm8940, uint8_t state)
+{
+    uint16_t val = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_CONTROL_INTERFACE);
+    val &= ~(1 << 1);
+    val |= (state ? 1 : 0) << 1;
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_CONTROL_INTERFACE, val);
+    return WM8940_STATUS_OK;
+}
+
 /* ----- Readback registers ----- */
 wm8940_status_t WM8940_Get_ChipID(WM8940_t* wm8940, uint16_t* chip_id)
 {

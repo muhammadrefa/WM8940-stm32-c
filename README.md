@@ -48,9 +48,9 @@ WIP (Work In Progress) and untested
     - [X] Set PLL frequency
 - [X] Companding
 - [X] General Purpose Input/Output
-- [ ] Control interface
+- [X] Control interface
     - [X] Selection of control mode
-    - [ ] Auto-incremental write setting
+    - [X] Auto-incremental write setting
     - [X] Readback
 - [X] Resetting the chip
 - [X] Power management

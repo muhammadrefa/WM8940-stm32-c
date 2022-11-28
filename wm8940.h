@@ -112,6 +112,7 @@ wm8940_status_t WM8940_Set_GPIO_Control(WM8940_t* wm8940, wm8940_gpio_function_t
 
 // Control interface
 wm8940_status_t WM8940_Set_ModePin_Function(WM8940_t* wm8940, wm8940_mode_pin_function_t function);
+wm8940_status_t WM8940_Set_AutoIncrementalWrite(WM8940_t* wm8940, uint8_t state);
 
 // Readback registers
 wm8940_status_t WM8940_Get_ChipID(WM8940_t* wm8940, uint16_t* chip_id);
