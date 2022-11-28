@@ -42,10 +42,10 @@ WIP (Work In Progress) and untested
     - [X] Audio interface control
     - [X] (ADC & DAC) Loopback
 - [X] Audio sample rates
-- [ ] Master clock and Phase Locked Loop (PLL)
+- [X] Master clock and Phase Locked Loop (PLL)
     - [X] Enable PLL
     - [X] Set PLL power
-    - [ ] Set PLL frequency
+    - [X] Set PLL frequency
 - [X] Companding
 - [X] General Purpose Input/Output
 - [ ] Control interface

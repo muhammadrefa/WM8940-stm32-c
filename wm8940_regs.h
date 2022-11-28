@@ -38,9 +38,9 @@ typedef enum _wm8940_register
     WM8940_REG_ALC_CTRL_3 = 34,
     WM8940_REG_NOISE_GATE = 35,
     WM8940_REG_PLL_N = 35,
-    WM8940_REG_PLL_K_1 = 36,
-    WM8940_REG_PLL_K_2 = 37,
-    WM8940_REG_PLL_K_3 = 38,
+    WM8940_REG_PLL_K1 = 36,
+    WM8940_REG_PLL_K2 = 37,
+    WM8940_REG_PLL_K3 = 38,
 
     WM8940_REG_ALC_CTRL_4 = 42,
 
@@ -156,6 +156,14 @@ typedef enum _wm8940_clksel
     WM8940_CLKSEL_MCLK = 0,
     WM8940_CLKSEL_PLL = 1
 } wm8940_clksel_t;
+
+typedef enum _wm8904_pll_prescaler
+{
+    WM8940_PLLPRESCALE_MCLK_TIM2 = 0,
+    WM8940_PLLPRESCALE_MCLK = 1,
+    WM8940_PLLPRESCALE_MCLK_DIV2 = 2,
+    WM8940_PLLPRESCALE_MCLK_DIV4 = 3
+} wm8940_pll_prescaler_t;
 
 typedef enum _wm8940_sample_rate
 {

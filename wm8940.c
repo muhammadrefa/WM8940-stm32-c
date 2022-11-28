@@ -590,6 +590,22 @@ wm8940_status_t WM8940_Set_PLL_PowerDown(WM8940_t* wm8940, uint8_t state)
     return WM8940_STATUS_OK;
 }
 
+wm8940_status_t WM8940_Set_PLL_FrequencyRatio(WM8940_t* wm8940, wm8940_pll_prescaler_t prescaler, uint8_t N, uint32_t K)
+{
+    if (N < 5 || N > 13)
+        return WM8940_STATUS_INVALID;
+    if (K > 0xFFFFFF)
+        return WM8940_STATUS_INVALID;
+    
+    uint16_t n_regval = WM8940_I2C_READ(wm8940->i2c_handle, WM8940_REG_PLL_N) & (1 << 7);
+    n_regval |= (N & 0x0F) | ((prescaler & 0x03) << 4) | ((K ? 1 : 0) << 6);
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_PLL_K3, K & 0x1FF);
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_PLL_K2, (K >> 9) & 0x1FF);
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_PLL_K1, (K >> 18) & 0x3F);
+    WM8940_I2C_WRITE(wm8940->i2c_handle, WM8940_REG_PLL_N, n_regval);
+    return WM8940_STATUS_OK;
+}
+
 /* ----- Companding ----- */
 wm8940_status_t WM8940_Set_ADC_Companding(WM8940_t* wm8940, wm8940_companding_t companding)
 {

@@ -99,6 +99,7 @@ wm8940_status_t WM8940_Set_SampleRate(WM8940_t* wm8940, wm8940_sample_rate_t sam
 // Master clock and PLL
 wm8940_status_t WM8940_Set_PLL_Enable(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_PLL_PowerDown(WM8940_t* wm8940, uint8_t state);
+wm8940_status_t WM8940_Set_PLL_FrequencyRatio(WM8940_t* wm8940, wm8940_pll_prescaler_t prescaler, uint8_t N, uint32_t K);
 
 // Companding
 wm8940_status_t WM8940_Set_ADC_Companding(WM8940_t* wm8940, wm8940_companding_t companding);
