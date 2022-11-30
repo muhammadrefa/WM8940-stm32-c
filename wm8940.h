@@ -94,6 +94,9 @@ wm8940_status_t WM8940_Set_ThermalShutdown_Enable(WM8940_t* wm8940, uint8_t stat
 // Digital audio interfaces
 wm8940_status_t WM8940_Set_Clock(WM8940_t* wm8940, uint8_t is_master, wm8940_bclkdiv_t bclk_divider, wm8940_mclkdiv_t mclk_divider, wm8940_clksel_t clock_source);
 wm8940_status_t WM8940_Set_AudioInterfaceFormat(WM8940_t* wm8940, wm8940_audio_iface_fmt_t format, wm8940_audio_iface_wl_t word_length);
+wm8940_status_t WM8940_Set_FrameClock_Polarity(WM8940_t* wm8940, uint8_t invert);
+wm8940_status_t WM8940_Set_BCLK_Polarity(WM8940_t* wm8940, uint8_t invert);
+wm8940_status_t WM8940_Set_LOUTR(WM8940_t* wm8940, uint8_t enable);
 
 // Audio sample rates
 wm8940_status_t WM8940_Set_SampleRate(WM8940_t* wm8940, wm8940_sample_rate_t sample_rate);
@@ -106,8 +109,9 @@ wm8940_status_t WM8940_Set_PLL_FrequencyRatio(WM8940_t* wm8940, wm8940_pll_presc
 // Companding
 wm8940_status_t WM8940_Set_ADC_Companding(WM8940_t* wm8940, wm8940_companding_t companding);
 wm8940_status_t WM8940_Set_DAC_Companding(WM8940_t* wm8940, wm8940_companding_t companding);
-wm8940_status_t WM8940_Set_ADC_Loopback(WM8940_t* wm8940, uint8_t state);
-wm8940_status_t WM8940_Set_DAC_Loopback(WM8940_t* wm8940, uint8_t state);
+wm8940_status_t WM8940_Set_ADC_Loopback(WM8940_t* wm8940, uint8_t enable);
+wm8940_status_t WM8940_Set_DAC_Loopback(WM8940_t* wm8940, uint8_t enable);
+wm8940_status_t WM8940_Set_WordLength8(WM8940_t* wm8940, uint8_t enable);
 
 // GPIO control
 wm8940_status_t WM8940_Set_GPIO_Control(WM8940_t* wm8940, wm8940_gpio_function_t function, uint8_t invert_polarity);

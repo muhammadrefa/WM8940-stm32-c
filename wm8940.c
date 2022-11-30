@@ -561,6 +561,33 @@ wm8940_status_t WM8940_Set_AudioInterfaceFormat(WM8940_t* wm8940, wm8940_audio_i
     return WM8940_STATUS_OK;
 }
 
+wm8940_status_t WM8940_Set_FrameClock_Polarity(WM8940_t* wm8940, uint8_t invert)
+{
+    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE);
+    val &= ~(1 << 7);
+    val |= ((invert ? 1 : 0) << 7);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, val);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_BCLK_Polarity(WM8940_t* wm8940, uint8_t invert)
+{
+    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE);
+    val &= ~(1 << 8);
+    val |= ((invert ? 1 : 0) << 8);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, val);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_LOUTR(WM8940_t* wm8940, uint8_t enable)
+{
+    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE);
+    val &= ~(1 << 9);
+    val |= ((enable ? 1 : 0) << 9);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, val);
+    return WM8940_STATUS_OK;
+}
+
 /* ----- Audio sample rates ----- */
 wm8940_status_t WM8940_Set_SampleRate(WM8940_t* wm8940, wm8940_sample_rate_t sample_rate)
 {
@@ -639,20 +666,29 @@ wm8940_status_t WM8940_Set_DAC_Companding(WM8940_t* wm8940, wm8940_companding_t 
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_ADC_Loopback(WM8940_t* wm8940, uint8_t state)
+wm8940_status_t WM8940_Set_ADC_Loopback(WM8940_t* wm8940, uint8_t enable)
 {
     uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL);
     val &= ~(1 << 0);
-    val |= (state ? 1 : 0) << 1;
+    val |= (enable ? 1 : 0) << 1;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, val);
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_DAC_Loopback(WM8940_t* wm8940, uint8_t state)
+wm8940_status_t WM8940_Set_DAC_Loopback(WM8940_t* wm8940, uint8_t enable)
 {
     uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL);
     val &= ~(1 << 6);
-    val |= (state ? 1 : 0) << 6;
+    val |= (enable ? 1 : 0) << 6;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, val);
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_WordLength8(WM8940_t* wm8940, uint8_t enable)
+{
+    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL);
+    val &= ~(1 << 5);
+    val |= (enable ? 1 : 0) << 5;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, val);
     return WM8940_STATUS_OK;
 }
