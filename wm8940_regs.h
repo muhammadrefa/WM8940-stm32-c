@@ -135,6 +135,14 @@ typedef enum _wm8940_audio_iface_fmt
     WM8940_AUDIO_IFACE_FMT_PCM_DSP = 3
 } wm8940_audio_iface_fmt_t;
 
+typedef enum _wm8940_audio_iface_wl
+{
+    WM8940_AUDIO_IFACE_WL_16BITS = 0,
+    WM8940_AUDIO_IFACE_WL_20BITS = 1,
+    WM8940_AUDIO_IFACE_WL_24BITS = 2,
+    WM8940_AUDIO_IFACE_WL_32BITS = 3
+} wm8940_audio_iface_wl_t;
+
 typedef enum _wm8940_bclkdiv
 {
     WM8940_BCLKDIV_1 = 0,

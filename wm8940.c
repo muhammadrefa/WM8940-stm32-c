@@ -551,11 +551,12 @@ wm8940_status_t WM8940_Set_Clock(WM8940_t* wm8940, uint8_t is_master, wm8940_bcl
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_AudioInterfaceFormat(WM8940_t* wm8940, wm8940_audio_iface_fmt_t format)
+wm8940_status_t WM8940_Set_AudioInterfaceFormat(WM8940_t* wm8940, wm8940_audio_iface_fmt_t format, wm8940_audio_iface_wl_t word_length)
 {
     uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE);
-    val &= ~(0x03 << 3);
+    val &= ~(0x0F << 3);
     val |= (format << 3);
+    val |= (word_length << 5);
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, val);
     return WM8940_STATUS_OK;
 }
