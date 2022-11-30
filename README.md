@@ -38,15 +38,22 @@ WIP (Work In Progress) and untested
     - [X] Unused analogue inputs/outputs (VREF to analogue output resistance/VROI)
 - [X] Output switch
     - [X] Thermal shutdown
-- [X] Digital audio interfaces
-    - [X] Audio interface control
-    - [X] (ADC & DAC) Loopback
+- [ ] Digital audio interfaces
+    - [X] Set audio format
+    - [X] Set word length
+    - [X] Set frame clock and BCLK polarity
+    - [X] Set LOUTR
+    - [ ] (ADC & DAC) data L&R swap
+    - [X] Clock generation control
 - [X] Audio sample rates
 - [X] Master clock and Phase Locked Loop (PLL)
     - [X] Enable PLL
     - [X] Set PLL power
     - [X] Set PLL frequency
 - [X] Companding
+    - [X] (ADC & DAC) Loopback
+    - [X] (ADC & DAC) Companding
+    - [X] Enable 8-bit word length
 - [X] General Purpose Input/Output
 - [X] Control interface
     - [X] Selection of control mode
