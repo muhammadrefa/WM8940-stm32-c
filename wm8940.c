@@ -454,7 +454,7 @@ wm8940_status_t WM8940_Set_Speaker_Volume_db(WM8940_t* wm8940, int8_t vol_db)
     else if (vol_db >= 6)
         return WM8940_STATUS_INVALID;
 
-    return WM8940_Set_Speaker_Volume(wm8940, WM8940_VOL_DB_TO_REG_VALUE(vol_db));
+    return WM8940_Set_Speaker_Volume(wm8940, WM8940_SPKVOL_DB_TO_REG_VALUE(vol_db));
 }
 
 uint8_t WM8940_Get_Speaker_Volume(WM8940_t* wm8940)
