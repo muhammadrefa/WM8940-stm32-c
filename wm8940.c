@@ -23,8 +23,9 @@ wm8940_status_t WM8940_Init(WM8940_t* wm8940)
     // Datasheet page 64
     WM8940_SoftwareReset(wm8940);
     // Enable VMID_OP_EN and LVLSHIFT_EN
-    uint8_t regval = (1 << 8) | (1 << 7);
+    uint16_t regval = (1 << 8) | (1 << 7);
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, regval);
+    return WM8940_STATUS_OK;
 }
 
 /* ----- Input signal path ----- */
