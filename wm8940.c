@@ -2,26 +2,61 @@
 #include "wm8940_regs.h"
 
 
-// Private function prototypes
-wm8940_status_t _WM8940_Get_PowerManagement1(WM8940_t* wm8940, uint16_t* regval);
-wm8940_status_t _WM8940_Get_PGA_Volume(WM8940_t* wm8940, uint8_t* volume);
-wm8940_status_t _WM8940_Get_Speaker_Volume(WM8940_t* wm8940, uint8_t* val);
-
-
-wm8940_status_t _WM8940_Get_PowerManagement1(WM8940_t* wm8940, uint16_t* regval)
-{
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1);
-    val &= ~(0x07);
-    val |= (wm8940->_vmid_sel & 0x03) << 0;
-    val |= (wm8940->_bufioen & 0x01) << 3;
-    *regval = val;
-    return WM8940_STATUS_OK;
-}
-
 wm8940_status_t WM8940_Init(WM8940_t* wm8940)
 {
     // Datasheet page 64
     WM8940_SoftwareReset(wm8940);
+
+    // Set register default values based on datasheet
+    // Doesn't need to set the software reset register value
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] = 0x0000;
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_2] = 0x0000;
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_3] = 0x0000;
+    wm8940->_register[WM8940_REG_AUDIO_INTERFACE] = 0x0050;
+    wm8940->_register[WM8940_REG_COMPANDING_CTRL] = 0x0000;
+    wm8940->_register[WM8940_REG_CLOCK_GEN_CTRL] = 0x0140;
+    wm8940->_register[WM8940_REG_ADDITIONAL_CTRL] = 0x0000;
+    wm8940->_register[WM8940_REG_GPIO_CTRL] = 0x0000;
+    wm8940->_register[WM8940_REG_CONTROL_INTERFACE] = 0x0002;
+    wm8940->_register[WM8940_REG_DAC_CTRL] = 0x0000;
+    wm8940->_register[WM8940_REG_DAC_DIGITAL_VOL] = 0x00FF;
+    // reserved
+    wm8940->_register[WM8940_REG_ADC_CTRL] = 0x0100;
+    wm8940->_register[WM8940_REG_ADC_DIGITAL_VOL] = 0x00FF;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_1] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_2] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_3] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_4] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_5] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_6] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_7] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_8] = 0x0000;
+    wm8940->_register[WM8940_REG_DAC_LIMITER_1] = 0x0032;
+    wm8940->_register[WM8940_REG_DAC_LIMITER_2] = 0x0000;
+    // reserved
+    wm8940->_register[WM8940_REG_ALC_CTRL_1] = 0x0034;
+    wm8940->_register[WM8940_REG_ALC_CTRL_2] = 0x000B;
+    wm8940->_register[WM8940_REG_ALC_CTRL_3] = 0x0032;
+    wm8940->_register[WM8940_REG_NOISE_GATE] = 0x0000;
+    wm8940->_register[WM8940_REG_PLL_N] = 0x0048;
+    wm8940->_register[WM8940_REG_PLL_K1] = 0x000C;
+    wm8940->_register[WM8940_REG_PLL_K2] = 0x0093;
+    wm8940->_register[WM8940_REG_PLL_K3] = 0x00E9;
+    // reserved
+    wm8940->_register[WM8940_REG_ALC_CTRL_4] = 0x0030;
+    // reserved
+    wm8940->_register[WM8940_REG_INPUT_CTRL] = 0x0002;
+    wm8940->_register[WM8940_REG_INPPGA_GAIN_CTRL] = 0x0050;
+    // reserved
+    wm8940->_register[WM8940_REG_ADC_BOOST_CTRL] = 0x0000;
+    // reserved
+    wm8940->_register[WM8940_REG_OUTPUT_CTRL] = 0x0002;
+    wm8940->_register[WM8940_REG_SPK_MIXER] = 0x0000;
+    // reserved
+    wm8940->_register[WM8940_REG_SPK_VOL_CTRL] = 0x0079;
+    // reserved
+    wm8940->_register[WM8940_REG_MONO_MIXER_CTRL] = 0x0000;
+
     // Enable VMID_OP_EN and LVLSHIFT_EN
     uint16_t regval = (1 << 8) | (1 << 7);
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, regval);
@@ -31,17 +66,18 @@ wm8940_status_t WM8940_Init(WM8940_t* wm8940)
 /* ----- Input signal path ----- */
 wm8940_status_t WM8940_Get_PGA_Input(WM8940_t* wm8940, wm8940_input_t* input)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_INPUT_CTRL);
+    uint16_t val = wm8940->_register[WM8940_REG_INPUT_CTRL];
     *input = val & 0x0007;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_PGA_Input(WM8940_t* wm8940, wm8940_input_t input)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_INPUT_CTRL);
-    val &= ~(0x0007);
-    val |= (uint16_t)input;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_INPUT_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_INPUT_CTRL];
+    regval &= ~(0x0007);
+    regval |= (uint16_t)input;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_INPUT_CTRL, regval);
+    wm8940->_register[WM8940_REG_INPUT_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -50,11 +86,11 @@ wm8940_status_t WM8940_Set_PGA_Volume(WM8940_t* wm8940, uint8_t val)
     if (val > 0x3F)
         return WM8940_STATUS_INVALID;
 
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_INPPGA_GAIN_CTRL);
+    uint16_t regval = wm8940->_register[WM8940_REG_INPPGA_GAIN_CTRL];
     regval &= ~(0x003F);
     regval |= (val & 0x003F);
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_INPPGA_GAIN_CTRL, regval);
-    wm8940->_vol_pga = val;
+    wm8940->_register[WM8940_REG_INPPGA_GAIN_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -78,71 +114,66 @@ wm8940_status_t WM8940_Set_PGA_Volume_db(WM8940_t* wm8940, float vol_db)
 
 uint8_t WM8940_Get_PGA_Volume(WM8940_t* wm8940)
 {
-    return wm8940->_vol_pga;
-}
-
-wm8940_status_t _WM8940_Get_PGA_Volume(WM8940_t* wm8940, uint8_t* val)
-{
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_INPPGA_GAIN_CTRL);
-    *val = regval & 0x003F;
-    return WM8940_STATUS_OK;
+    return wm8940->_register[WM8940_REG_INPPGA_GAIN_CTRL] & 0x003F;
 }
 
 wm8940_status_t WM8940_Set_PGA_Mute(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_INPPGA_GAIN_CTRL);
-    val &= ~(1 << 6);
-    val |= (state ? 1 : 0) << 6;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_INPPGA_GAIN_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_INPPGA_GAIN_CTRL];
+    regval &= ~(1 << 6);
+    regval |= (state ? 1 : 0) << 6;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_INPPGA_GAIN_CTRL, regval);
+    wm8940->_register[WM8940_REG_INPPGA_GAIN_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_PGA_ZeroCross(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_INPPGA_GAIN_CTRL);
-    val &= ~(1 << 7);
-    val |= (state ? 1 : 0) << 7;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_INPPGA_GAIN_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_INPPGA_GAIN_CTRL];
+    regval &= ~(1 << 7);
+    regval |= (state ? 1 : 0) << 7;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_INPPGA_GAIN_CTRL, regval);
+    wm8940->_register[WM8940_REG_INPPGA_GAIN_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_PGA_Enable(WM8940_t* wm8940, uint8_t state)
+wm8940_status_t WM8940_Set_PGA_Enable(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_2);
-    val &= ~(1 << 2);
-    val |= (state ? 1 : 0) << 2;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_2, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_2];
+    regval &= ~(1 << 2);
+    regval |= (enable ? 1 : 0) << 2;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_2, regval);
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_2] = regval;
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_Aux_Enable(WM8940_t* wm8940, uint8_t state)
+wm8940_status_t WM8940_Set_Aux_Enable(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t val;
-    wm8940_status_t status;
-    status = _WM8940_Get_PowerManagement1(wm8940, &val);
-    if (status != WM8940_STATUS_OK)
-        return status;
-    val &= ~(1 << 6);
-    val |= (state ? 1 : 0) << 6;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1];
+    regval &= ~(1 << 6);
+    regval |= (enable ? 1 : 0) << 6;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, regval);
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_Aux_Mode(WM8940_t* wm8940, wm8940_aux_mode_t mode)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_INPUT_CTRL);
-    val &= ~(1 << 3);
-    val |= mode << 3;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_INPUT_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_INPUT_CTRL];
+    regval &= ~(1 << 3);
+    regval |= mode << 3;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_INPUT_CTRL, regval);
+    wm8940->_register[WM8940_REG_INPUT_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_PGA_Boost(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ADC_BOOST_CTRL);
-    val &= ~(1 << 8);
-    val |= (state ? 1 : 0) << 8;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADC_BOOST_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_ADC_BOOST_CTRL];
+    regval &= ~(1 << 8);
+    regval |= (state ? 1 : 0) << 8;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADC_BOOST_CTRL, regval);
+    wm8940->_register[WM8940_REG_ADC_BOOST_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -160,60 +191,62 @@ wm8940_status_t WM8940_Set_Boost_Volume(WM8940_t* wm8940, wm8940_input_t input, 
     }
     if (shift < 0) return WM8940_STATUS_INVALID;
 
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ADC_BOOST_CTRL);
-    val &= ~(0x07 << shift);
-    val |= (vol & 0x07) << shift;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADC_BOOST_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_ADC_BOOST_CTRL];
+    regval &= ~(0x07 << shift);
+    regval |= (vol & 0x07) << shift;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADC_BOOST_CTRL, regval);
+    wm8940->_register[WM8940_REG_ADC_BOOST_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_Boost_Enable(WM8940_t* wm8940, uint8_t state)
+wm8940_status_t WM8940_Set_Boost_Enable(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_2);
-    val &= ~(1 << 4);
-    val |= (state ? 1 : 0) << 4;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_2, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_2];
+    regval &= ~(1 << 4);
+    regval |= (enable ? 1 : 0) << 4;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_2, regval);
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_2] = regval;
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_MicBias_Enable(WM8940_t* wm8940, uint8_t state)
+wm8940_status_t WM8940_Set_MicBias_Enable(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t val;
-    wm8940_status_t status;
-    status = _WM8940_Get_PowerManagement1(wm8940, &val);
-    if (status != WM8940_STATUS_OK)
-        return status;
-    val &= ~(1 << 4);
-    val |= (state ? 1 : 0) << 4;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1];
+    regval &= ~(1 << 4);
+    regval |= (enable ? 1 : 0) << 4;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, regval);
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_MicBias_Voltage(WM8940_t* wm8940, wm8940_micbias_voltage_t percentage)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_INPUT_CTRL);
-    val &= ~(1 << 8);
-    val |= percentage;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_INPUT_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_INPUT_CTRL];
+    regval &= ~(1 << 8);
+    regval |= percentage;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_INPUT_CTRL, regval);
+    wm8940->_register[WM8940_REG_INPUT_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 /* ----- ADC ----- */
-wm8940_status_t WM8940_Set_ADC_Enable(WM8940_t* wm8940, uint8_t state)
+wm8940_status_t WM8940_Set_ADC_Enable(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_2);
-    val &= ~(1 << 0);
-    val |= (state ? 1 : 0) << 0;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_2, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_2];
+    regval &= ~(1 << 0);
+    regval |= (enable ? 1 : 0) << 0;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_2, regval);
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_2] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_ADC_Polarity(WM8940_t* wm8940, uint8_t invert)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ADC_CTRL);
-    val &= ~(1 << 0);
-    val |= (invert ? 1 : 0) << 0;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADC_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_ADC_CTRL];
+    regval &= ~(1 << 0);
+    regval |= (invert ? 1 : 0) << 0;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADC_CTRL, regval);
+    wm8940->_register[WM8940_REG_ADC_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -243,12 +276,13 @@ wm8940_status_t WM8940_Set_ADC_Volume(WM8940_t* wm8940, uint8_t regval)
 }
 
 /* ----- ALC ----- */
-wm8940_status_t WM8940_Set_ALC_Enable(WM8940_t* wm8940, uint8_t state)
+wm8940_status_t WM8940_Set_ALC_Enable(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ALC_CTRL_1);
+    uint16_t regval = wm8940->_register[WM8940_REG_ALC_CTRL_1];
     regval &= ~(1 << 8);
-    regval |= (state ? 1 : 0) << 8;
+    regval |= (enable ? 1 : 0) << 8;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ALC_CTRL_1, regval);
+    wm8940->_register[WM8940_REG_ALC_CTRL_1] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -257,11 +291,12 @@ wm8940_status_t WM8940_Set_ALC_Gain(WM8940_t* wm8940, uint8_t minval, uint8_t ma
     if ((minval > 0x07) || (maxval > 0x07))
         return WM8940_STATUS_INVALID;
 
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ALC_CTRL_1);
+    uint16_t regval = wm8940->_register[WM8940_REG_ALC_CTRL_1];
     regval &= ~(0x3F << 0);
     regval |= (minval & 0x07) << 0;
     regval |= (maxval & 0x07) << 3;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ALC_CTRL_1, regval);
+    wm8940->_register[WM8940_REG_ALC_CTRL_1] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -270,10 +305,11 @@ wm8940_status_t WM8940_Set_ALC_Level(WM8940_t* wm8940, uint8_t val)
     if (val > 0x0F)
         return WM8940_STATUS_INVALID;
     
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ALC_CTRL_2);
+    uint16_t regval = wm8940->_register[WM8940_REG_ALC_CTRL_2];
     regval &= ~(0x0F << 0);
     regval |= (val & 0x0F) << 0;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ALC_CTRL_2, regval);
+    wm8940->_register[WM8940_REG_ALC_CTRL_2] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -282,19 +318,21 @@ wm8940_status_t WM8940_Set_ALC_Hold(WM8940_t* wm8940, uint8_t val)
     if (val > 0x0F)
         return WM8940_STATUS_INVALID;
     
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ALC_CTRL_2);
+    uint16_t regval = wm8940->_register[WM8940_REG_ALC_CTRL_2];
     regval &= ~(0x0F << 4);
     regval |= (val & 0x0F) << 4;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ALC_CTRL_2, regval);
+    wm8940->_register[WM8940_REG_ALC_CTRL_2] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_ALC_Mode(WM8940_t* wm8940, wm8940_alc_mode_t mode)
 {
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ALC_CTRL_3);
+    uint16_t regval = wm8940->_register[WM8940_REG_ALC_CTRL_3];
     regval &= ~(1 << 8);
     regval |= (mode & 0x01) << 8;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ALC_CTRL_3, regval);
+    wm8940->_register[WM8940_REG_ALC_CTRL_3] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -303,10 +341,11 @@ wm8940_status_t WM8940_Set_ALC_DecayTime(WM8940_t* wm8940, uint8_t val)
     if (val > 0x0F)
         return WM8940_STATUS_INVALID;
     
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ALC_CTRL_3);
+    uint16_t regval = wm8940->_register[WM8940_REG_ALC_CTRL_3];
     regval &= ~(0x0F << 4);
     regval |= (val & 0x0F) << 4;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ALC_CTRL_3, regval);
+    wm8940->_register[WM8940_REG_ALC_CTRL_3] = regval;
     return WM8940_STATUS_OK;
 }
 wm8940_status_t WM8940_Set_ALC_AttackTime(WM8940_t* wm8940, uint8_t val)
@@ -314,19 +353,21 @@ wm8940_status_t WM8940_Set_ALC_AttackTime(WM8940_t* wm8940, uint8_t val)
     if (val > 0x0F)
         return WM8940_STATUS_INVALID;
     
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ALC_CTRL_3);
+    uint16_t regval = wm8940->_register[WM8940_REG_ALC_CTRL_3];
     regval &= ~(0x0F << 0);
     regval |= (val & 0x0F) << 0;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ALC_CTRL_3, regval);
+    wm8940->_register[WM8940_REG_ALC_CTRL_3] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_ALC_ZeroCross(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ALC_CTRL_4);
+    uint16_t regval = wm8940->_register[WM8940_REG_ALC_CTRL_4];
     regval &= ~(1 << 1);
     regval |= (state ? 1 : 0) << 1;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ALC_CTRL_4, regval);
+    wm8940->_register[WM8940_REG_ALC_CTRL_4] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -335,68 +376,76 @@ wm8940_status_t WM8940_Set_ALC_NoiseGate_Threshold(WM8940_t* wm8940, uint8_t val
     if (val > 7)
         return WM8940_STATUS_INVALID;
 
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_NOISE_GATE);
+    uint16_t regval = wm8940->_register[WM8940_REG_NOISE_GATE];
     regval &= ~(0x07 << 0);
     regval |= (val & 0x07) << 0;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_NOISE_GATE, regval);
+    wm8940->_register[WM8940_REG_NOISE_GATE] = regval;
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_ALC_NoiseGate_Enable(WM8940_t* wm8940, uint8_t state)
+wm8940_status_t WM8940_Set_ALC_NoiseGate_Enable(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_NOISE_GATE);
+    uint16_t regval = wm8940->_register[WM8940_REG_NOISE_GATE];
     regval &= ~(1 << 3);
-    regval |= (state ? 1 : 0) << 3;
+    regval |= (enable ? 1 : 0) << 3;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_NOISE_GATE, regval);
+    wm8940->_register[WM8940_REG_NOISE_GATE] = regval;
     return WM8940_STATUS_OK;
 }
 
 /* ----- DAC ----- */
-wm8940_status_t WM8940_Set_DAC_Enable(WM8940_t* wm8940, uint8_t state)
+wm8940_status_t WM8940_Set_DAC_Enable(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_3);
-    val &= ~(1 << 0);
-    val |= (state ? 1 : 0) << 0;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_3, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_3];
+    regval &= ~(1 << 0);
+    regval |= (enable ? 1 : 0) << 0;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_3, regval);
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_3] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_DAC_Polarity(WM8940_t* wm8940, uint8_t invert)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_DAC_CTRL);
-    val &= ~(1 << 0);
-    val |= (invert ? 1 : 0) << 0;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_DAC_CTRL];
+    regval &= ~(1 << 0);
+    regval |= (invert ? 1 : 0) << 0;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_CTRL, regval);
+    wm8940->_register[WM8940_REG_DAC_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_DAC_Volume(WM8940_t* wm8940, uint8_t regval)
+wm8940_status_t WM8940_Set_DAC_Volume(WM8940_t* wm8940, uint8_t val)
 {
-    uint16_t val = 0;
-    val |= (regval & 0xFF) << 0;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_DIGITAL_VOL, val);
+    uint16_t regval = 0;
+    regval |= (val & 0xFF) << 0;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_DIGITAL_VOL, regval);
+    wm8940->_register[WM8940_REG_DAC_DIGITAL_VOL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_DAC_SoftMute(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_DAC_CTRL);
-    val &= ~(1 << 6);
-    val |= (state ? 1 : 0) << 6;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_DAC_CTRL];
+    regval &= ~(1 << 6);
+    regval |= (state ? 1 : 0) << 6;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_CTRL, regval);
+    wm8940->_register[WM8940_REG_DAC_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_DAC_AutoMute(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_DAC_CTRL);
-    val &= ~(1 << 2);
-    val |= (state ? 1 : 0) << 2;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_DAC_CTRL];
+    regval &= ~(1 << 2);
+    regval |= (state ? 1 : 0) << 2;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_CTRL, regval);
+    wm8940->_register[WM8940_REG_DAC_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 /* ----- Analogue outputs ----- */
+// TODO: Change all WM8940_REG_READ() with read register value from struct
 wm8940_status_t WM8940_Set_Speaker_Source(WM8940_t* wm8940, wm8940_speaker_source_t source)
 {
     uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_SPK_MIXER);
@@ -444,7 +493,6 @@ wm8940_status_t WM8940_Set_Speaker_Volume(WM8940_t* wm8940, uint8_t val)
     regval &= ~(0x3F << 0);
     regval |= (val & 0x3F) << 0;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL, regval);
-    wm8940->_vol_spk = val;
     return WM8940_STATUS_OK;
 }
 
@@ -460,20 +508,12 @@ wm8940_status_t WM8940_Set_Speaker_Volume_db(WM8940_t* wm8940, int8_t vol_db)
 
 uint8_t WM8940_Get_Speaker_Volume(WM8940_t* wm8940)
 {
-    return wm8940->_vol_spk;
+    return wm8940->_register[WM8940_REG_SPK_VOL_CTRL] & 0x3F;
 }
 
 uint8_t WM8940_Get_Speaker_Volume_db(WM8940_t* wm8940)
 {
-    return WM8940_SPKVOL_REG_VALUE_TO_DB(wm8940->_vol_spk);
-}
-
-wm8940_status_t _WM8940_Get_Speaker_Volume(WM8940_t* wm8940, uint8_t* val)
-{
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL);
-    regval &= 0x3F;
-    *val = regval;
-    return WM8940_STATUS_OK;
+    return WM8940_SPKVOL_REG_VALUE_TO_DB(WM8940_Get_Speaker_Volume(wm8940));
 }
 
 wm8940_status_t WM8940_Set_Mono_Source(WM8940_t* wm8940, wm8940_speaker_source_t source)
@@ -526,14 +566,16 @@ wm8940_status_t WM8940_Set_VREFToAnalogueOutputResistance(WM8940_t* wm8940, wm89
 /* ----- Output switch ----- */
 wm8940_status_t WM8940_Set_ThermalShutdown_Enable(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_OUTPUT_CTRL);
-    val &= ~(1 << 1);
-    val |= (state ? 1 : 0) << 1;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_OUTPUT_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_OUTPUT_CTRL];
+    regval &= ~(1 << 1);
+    regval |= (state ? 1 : 0) << 1;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_OUTPUT_CTRL, regval);
+    regval = wm8940->_register[WM8940_REG_OUTPUT_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 /* ----- Digital audio interfaces ----- */
+// TODO: Change all WM8940_REG_READ() with read register value from struct
 wm8940_status_t WM8940_Set_Clock(WM8940_t* wm8940, uint8_t is_master, wm8940_bclkdiv_t bclk_divider, wm8940_mclkdiv_t mclk_divider, wm8940_clksel_t clock_source)
 {
     if (bclk_divider >= 6)
@@ -592,39 +634,41 @@ wm8940_status_t WM8940_Set_LOUTR(WM8940_t* wm8940, uint8_t enable)
 /* ----- Audio sample rates ----- */
 wm8940_status_t WM8940_Set_SampleRate(WM8940_t* wm8940, wm8940_sample_rate_t sample_rate)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ADDITIONAL_CTRL);
-    val &= ~(0x07 << 1);
-    val |= (sample_rate << 1);
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADDITIONAL_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_ADDITIONAL_CTRL];
+    regval &= ~(0x07 << 1);
+    regval |= (sample_rate << 1);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADDITIONAL_CTRL, regval);
+    wm8940->_register[WM8940_REG_ADDITIONAL_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 /* ----- Master clock and PLL ----- */
 wm8940_status_t WM8940_Set_PLL_Enable(WM8940_t* wm8940, uint8_t state)
 {
-    if (state && !wm8940->_vmid_sel)
+    if (state && !(wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] & 0x03))
         return WM8940_STATUS_INVALID;
 
-    uint16_t val;
-    wm8940_status_t status;
-    status = _WM8940_Get_PowerManagement1(wm8940, &val);
-    if (status != WM8940_STATUS_OK)
-        return status;
-    val &= ~(1 << 5);
-    val |= (state ? 1 : 0) << 5;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, val);
-    val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_PLL_N);
-    val &= ~(1 << 7);
-    val |= (state ? 0 : 1) << 7;
+    uint16_t regval = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1];
+    regval &= ~(1 << 5);
+    regval |= (state ? 1 : 0) << 5;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, regval);
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] = regval;
+
+    regval = wm8940->_register[WM8940_REG_PLL_N];
+    regval &= ~(1 << 7);
+    regval |= (state ? 0 : 1) << 7;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_PLL_N, regval);
+    wm8940->_register[WM8940_REG_PLL_N] = regval;
     return WM8940_STATUS_OK;
 
 }
 wm8940_status_t WM8940_Set_PLL_PowerDown(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_PLL_N);
-    val &= ~(1 << 7);
-    val |= (state ? 1 : 0) << 7;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_PLL_N, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_PLL_N];
+    regval &= ~(1 << 7);
+    regval |= (state ? 1 : 0) << 7;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_PLL_N, regval);
+    wm8940->_register[WM8940_REG_PLL_N] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -635,12 +679,16 @@ wm8940_status_t WM8940_Set_PLL_FrequencyRatio(WM8940_t* wm8940, wm8940_pll_presc
     if (K > 0xFFFFFF)
         return WM8940_STATUS_INVALID;
     
-    uint16_t n_regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_PLL_N) & (1 << 7);
+    uint16_t n_regval = wm8940->_register[WM8940_REG_PLL_N] & (1 << 7);
     n_regval |= (N & 0x0F) | ((prescaler & 0x03) << 4) | ((K ? 1 : 0) << 6);
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_PLL_K3, K & 0x1FF);
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_PLL_K2, (K >> 9) & 0x1FF);
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_PLL_K1, (K >> 18) & 0x3F);
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_PLL_N, n_regval);
+    wm8940->_register[WM8940_REG_PLL_K3] = K & 0x1FF;
+    wm8940->_register[WM8940_REG_PLL_K2] = (K >> 9) & 0x1FF;
+    wm8940->_register[WM8940_REG_PLL_K1] = (K >> 18) & 0x3F;
+    wm8940->_register[WM8940_REG_PLL_N] = n_regval;
     return WM8940_STATUS_OK;
 }
 
@@ -649,10 +697,11 @@ wm8940_status_t WM8940_Set_ADC_Companding(WM8940_t* wm8940, wm8940_companding_t 
 {
     if (companding == 2 || companding > 3)
         return WM8940_STATUS_INVALID;
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL);
-    val &= ~(0x03 << 1);
-    val |= companding << 1;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_COMPANDING_CTRL];
+    regval &= ~(0x03 << 1);
+    regval |= companding << 1;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, regval);
+    wm8940->_register[WM8940_REG_COMPANDING_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -660,37 +709,41 @@ wm8940_status_t WM8940_Set_DAC_Companding(WM8940_t* wm8940, wm8940_companding_t 
 {
     if (companding == 2 || companding > 3)
         return WM8940_STATUS_INVALID;
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL);
-    val &= ~(0x03 << 3);
-    val |= companding << 3;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_COMPANDING_CTRL];
+    regval &= ~(0x03 << 3);
+    regval |= companding << 3;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, regval);
+    wm8940->_register[WM8940_REG_COMPANDING_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_ADC_Loopback(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL);
-    val &= ~(1 << 0);
-    val |= (enable ? 1 : 0) << 1;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_COMPANDING_CTRL];
+    regval &= ~(1 << 0);
+    regval |= (enable ? 1 : 0) << 1;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, regval);
+    wm8940->_register[WM8940_REG_COMPANDING_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_DAC_Loopback(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL);
-    val &= ~(1 << 6);
-    val |= (enable ? 1 : 0) << 6;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_COMPANDING_CTRL];
+    regval &= ~(1 << 6);
+    regval |= (enable ? 1 : 0) << 6;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, regval);
+    wm8940->_register[WM8940_REG_COMPANDING_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_WordLength8(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL);
-    val &= ~(1 << 5);
-    val |= (enable ? 1 : 0) << 5;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_COMPANDING_CTRL];
+    regval &= ~(1 << 5);
+    regval |= (enable ? 1 : 0) << 5;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_COMPANDING_CTRL, regval);
+    wm8940->_register[WM8940_REG_COMPANDING_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -700,34 +753,37 @@ wm8940_status_t WM8940_Set_GPIO_Control(WM8940_t* wm8940, wm8940_gpio_function_t
     if (function > 5)
         return WM8940_STATUS_INVALID;
 
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_GPIO_CTRL);
+    uint16_t regval = wm8940->_register[WM8940_REG_GPIO_CTRL];
     
-    if (!(val & (1 << 7)))  // Mode pin as mode selector
+    if (!(regval & (1 << 7)))  // Mode pin as mode selector
         return WM8940_STATUS_INVALID;
     
-    val &= (0x07 << 0);
-    val |= function << 0;
-    val |= (invert_polarity ? 1 : 0) << 3;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_GPIO_CTRL, val);
+    regval &= (0x07 << 0);
+    regval |= function << 0;
+    regval |= (invert_polarity ? 1 : 0) << 3;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_GPIO_CTRL, regval);
+    wm8940->_register[WM8940_REG_GPIO_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 /* ----- Control interface ----- */
 wm8940_status_t WM8940_Set_ModePin_Function(WM8940_t* wm8940, wm8940_mode_pin_function_t function)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_GPIO_CTRL);
-    val &= (1 << 7);
-    val |= (function ? 1 : 0) << 7;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_GPIO_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_GPIO_CTRL];
+    regval &= (1 << 7);
+    regval |= (function ? 1 : 0) << 7;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_GPIO_CTRL, regval);
+    wm8940->_register[WM8940_REG_GPIO_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_AutoIncrementalWrite(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_CONTROL_INTERFACE);
-    val &= ~(1 << 1);
-    val |= (state ? 1 : 0) << 1;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_CONTROL_INTERFACE, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_CONTROL_INTERFACE];
+    regval &= ~(1 << 1);
+    regval |= (state ? 1 : 0) << 1;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_CONTROL_INTERFACE, regval);
+    wm8940->_register[WM8940_REG_CONTROL_INTERFACE] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -753,7 +809,7 @@ wm8940_status_t WM8940_Get_ALC_Gain(WM8940_t* wm8940, uint8_t* alc_gain)
 /* ----- Reset ----- */
 wm8940_status_t WM8940_SoftwareReset(WM8940_t* wm8940)
 {
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SOFTWARE_RESET, 0);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SOFTWARE_RESET, 1);
     return WM8940_STATUS_OK;
 }
 
@@ -763,30 +819,32 @@ wm8940_status_t WM8940_Set_VMID_Impedance(WM8940_t* wm8940, wm8940_vmid_impedanc
     if (impedance < 0 || impedance > 3)
         return WM8940_STATUS_INVALID;
 
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1);
-    val &= ~(0x03 << 0);
-    val |= impedance << 0;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1];
+    regval &= ~(0x03 << 0);
+    regval |= impedance << 0;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, regval);
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] = regval;
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_AnalogueAmplifierBias_Enable(WM8940_t* wm8940, uint8_t state)
+wm8940_status_t WM8940_Set_AnalogueAmplifierBias_Enable(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1);
-    val &= ~(1 << 3);
-    val |= (state ? 1 : 0) << 3;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1];
+    regval &= ~(1 << 3);
+    regval |= (enable ? 1 : 0) << 3;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, regval);
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Get_PowerManagement2(WM8940_t* wm8940, uint16_t* status)
 {
-    *status = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_2);
+    *status = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_2];
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Get_PowerManagement3(WM8940_t* wm8940, uint16_t* status)
 {
-    *status = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_3);
+    *status = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_3];
     return WM8940_STATUS_OK;
 }

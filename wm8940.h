@@ -15,10 +15,7 @@
 typedef struct _WM8940
 {
     uint32_t comm_handle;
-    wm8940_vmid_impedance_t _vmid_sel;
-    uint8_t _bufioen;
-    uint8_t _vol_pga;
-    uint8_t _vol_spk;
+    uint16_t _register[57];
 } WM8940_t;
 
 
@@ -39,23 +36,23 @@ uint8_t WM8940_Get_PGA_Volume(WM8940_t* wm8940);
 wm8940_status_t WM8940_Set_PGA_Volume(WM8940_t* wm8940, uint8_t vol);
 wm8940_status_t WM8940_Set_PGA_Mute(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_PGA_ZeroCross(WM8940_t* wm8940, uint8_t state);
-wm8940_status_t WM8940_Set_PGA_Enable(WM8940_t* wm8940, uint8_t state);
-wm8940_status_t WM8940_Set_Aux_Enable(WM8940_t* wm8940, uint8_t state);
+wm8940_status_t WM8940_Set_PGA_Enable(WM8940_t* wm8940, uint8_t enable);
+wm8940_status_t WM8940_Set_Aux_Enable(WM8940_t* wm8940, uint8_t enable);
 wm8940_status_t WM8940_Set_Aux_Mode(WM8940_t* wm8940, wm8940_aux_mode_t mode);
 wm8940_status_t WM8940_Set_PGA_Boost(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_Boost_Volume(WM8940_t* wm8940, wm8940_input_t input, uint8_t vol);
-wm8940_status_t WM8940_Set_Boost_Enable(WM8940_t* wm8940, uint8_t state);
-wm8940_status_t WM8940_Set_MicBias_Enable(WM8940_t* wm8940, uint8_t state);
+wm8940_status_t WM8940_Set_Boost_Enable(WM8940_t* wm8940, uint8_t enable);
+wm8940_status_t WM8940_Set_MicBias_Enable(WM8940_t* wm8940, uint8_t enable);
 wm8940_status_t WM8940_Set_MicBias_Voltage(WM8940_t* wm8940, wm8940_micbias_voltage_t percentage);
 
 // ADC
-wm8940_status_t WM8940_Set_ADC_Enable(WM8940_t* wm8940, uint8_t state);
+wm8940_status_t WM8940_Set_ADC_Enable(WM8940_t* wm8940, uint8_t enable);
 wm8940_status_t WM8940_Set_ADC_Polarity(WM8940_t* wm8940, uint8_t invert);
 wm8940_status_t WM8940_Set_ADC_HighPassFilter(WM8940_t* wm8940, uint8_t enable, wm8940_hpf_mode_t mode, uint8_t freq_regval);
 wm8940_status_t WM8940_Set_ADC_Volume(WM8940_t* wm8940, uint8_t regval);
 
 // ALC
-wm8940_status_t WM8940_Set_ALC_Enable(WM8940_t* wm8940, uint8_t state);
+wm8940_status_t WM8940_Set_ALC_Enable(WM8940_t* wm8940, uint8_t enable);
 wm8940_status_t WM8940_Set_ALC_Gain(WM8940_t* wm8940, uint8_t minval, uint8_t maxval);
 wm8940_status_t WM8940_Set_ALC_Level(WM8940_t* wm8940, uint8_t val);
 wm8940_status_t WM8940_Set_ALC_Hold(WM8940_t* wm8940, uint8_t val);
@@ -64,12 +61,12 @@ wm8940_status_t WM8940_Set_ALC_DecayTime(WM8940_t* wm8940, uint8_t val);
 wm8940_status_t WM8940_Set_ALC_AttackTime(WM8940_t* wm8940, uint8_t val);
 wm8940_status_t WM8940_Set_ALC_ZeroCross(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_ALC_NoiseGate_Threshold(WM8940_t* wm8940, uint8_t val);
-wm8940_status_t WM8940_Set_ALC_NoiseGate_Enable(WM8940_t* wm8940, uint8_t state);
+wm8940_status_t WM8940_Set_ALC_NoiseGate_Enable(WM8940_t* wm8940, uint8_t enable);
 
 // DAC
-wm8940_status_t WM8940_Set_DAC_Enable(WM8940_t* em8940, uint8_t state);
+wm8940_status_t WM8940_Set_DAC_Enable(WM8940_t* em8940, uint8_t enable);
 wm8940_status_t WM8940_Set_DAC_Polarity(WM8940_t* wm8940, uint8_t invert);
-wm8940_status_t WM8940_Set_DAC_Volume(WM8940_t* wm8940, uint8_t regval);
+wm8940_status_t WM8940_Set_DAC_Volume(WM8940_t* wm8940, uint8_t val);
 wm8940_status_t WM8940_Set_DAC_SoftMute(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_DAC_AutoMute(WM8940_t* wm8940, uint8_t state);
 
