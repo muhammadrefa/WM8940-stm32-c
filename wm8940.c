@@ -255,12 +255,13 @@ wm8940_status_t WM8940_Set_ADC_HighPassFilter(WM8940_t* wm8940, uint8_t enable, 
     if (freq_regval > 0x07)
         return WM8940_STATUS_INVALID;
 
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_ADC_CTRL);
-    val &= ~(0x1F << 4);
-    val |= (enable ? 1 : 0) << 8;
-    val |= (mode ? 1 : 0) << 7;
-    val |= (freq_regval & 0x07) << 4;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADC_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_ADC_CTRL];
+    regval &= ~(0x1F << 4);
+    regval |= (enable ? 1 : 0) << 8;
+    regval |= (mode ? 1 : 0) << 7;
+    regval |= (freq_regval & 0x07) << 4;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADC_CTRL, regval);
+    wm8940->_register[WM8940_REG_ADC_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -445,42 +446,45 @@ wm8940_status_t WM8940_Set_DAC_AutoMute(WM8940_t* wm8940, uint8_t state)
 }
 
 /* ----- Analogue outputs ----- */
-// TODO: Change all WM8940_REG_READ() with read register value from struct
 wm8940_status_t WM8940_Set_Speaker_Source(WM8940_t* wm8940, wm8940_speaker_source_t source)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_SPK_MIXER);
-    val &= ~(0x03 << 0);
-    val &= ~(1 << 5);
+    uint16_t regval = wm8940->_register[WM8940_REG_SPK_MIXER];
+    regval &= ~(0x03 << 0);
+    regval &= ~(1 << 5);
     if (source == WM8940_OUTPUT_FROM_AUX) source = (1 << 5);
-    val |= source;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SPK_MIXER, val);
+    regval |= source;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SPK_MIXER, regval);
+    wm8940->_register[WM8940_REG_SPK_MIXER] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_Speaker_FromBypass_Attenuation(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL);
-    val &= ~(1 << 8);
-    val |= (state ? 1 : 0) << 8;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_SPK_VOL_CTRL];
+    regval &= ~(1 << 8);
+    regval |= (state ? 1 : 0) << 8;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL, regval);
+    wm8940->_register[WM8940_REG_SPK_VOL_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_Speaker_ZeroCross(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL);
-    val &= ~(1 << 7);
-    val |= (state ? 1 : 0) << 7;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_SPK_VOL_CTRL];
+    regval &= ~(1 << 7);
+    regval |= (state ? 1 : 0) << 7;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL, regval);
+    wm8940->_register[WM8940_REG_SPK_VOL_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_Speaker_Mute(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL);
-    val &= ~(1 << 6);
-    val |= (state ? 1 : 0) << 6;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_SPK_VOL_CTRL];
+    regval &= ~(1 << 6);
+    regval |= (state ? 1 : 0) << 6;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL, regval);
+    wm8940->_register[WM8940_REG_SPK_VOL_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -489,10 +493,11 @@ wm8940_status_t WM8940_Set_Speaker_Volume(WM8940_t* wm8940, uint8_t val)
     if (val > 0x3F)
         return WM8940_STATUS_INVALID;
 
-    uint16_t regval = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL);
+    uint16_t regval = wm8940->_register[WM8940_REG_SPK_VOL_CTRL];
     regval &= ~(0x3F << 0);
     regval |= (val & 0x3F) << 0;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SPK_VOL_CTRL, regval);
+    wm8940->_register[WM8940_REG_SPK_VOL_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -518,48 +523,57 @@ uint8_t WM8940_Get_Speaker_Volume_db(WM8940_t* wm8940)
 
 wm8940_status_t WM8940_Set_Mono_Source(WM8940_t* wm8940, wm8940_speaker_source_t source)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_MONO_MIXER_CTRL);
-    val &= ~(0x07 << 0);
-    val |= source;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_MONO_MIXER_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_MONO_MIXER_CTRL];
+    regval &= ~(0x07 << 0);
+    regval |= source;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_MONO_MIXER_CTRL, regval);
+    wm8940->_register[WM8940_REG_MONO_MIXER_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_Mono_FromBypass_Attenuation(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_MONO_MIXER_CTRL);
-    val &= ~(1 << 7);
-    val |= (state ? 1 : 0) << 7;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_MONO_MIXER_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_MONO_MIXER_CTRL];
+    regval &= ~(1 << 7);
+    regval |= (state ? 1 : 0) << 7;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_MONO_MIXER_CTRL, regval);
+    wm8940->_register[WM8940_REG_MONO_MIXER_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_Mono_Mute(WM8940_t* wm8940, uint8_t state)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_MONO_MIXER_CTRL);
-    val &= ~(1 << 6);
-    val |= (state ? 1 : 0) << 6;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_MONO_MIXER_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_MONO_MIXER_CTRL];
+    regval &= ~(1 << 6);
+    regval |= (state ? 1 : 0) << 6;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_MONO_MIXER_CTRL, regval);
+    wm8940->_register[WM8940_REG_MONO_MIXER_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_Output_Enable(WM8940_t* wm8940, wm8940_output_t output)
 {
-    uint16_t val = 0;
-    if (output == WM8940_OUTPUT_SPK)
-        val |= WM8940_PM3_SPKMIX | WM8940_PM3_SPKP | WM8940_PM3_SPKN;
-    if (output == WM8940_OUTPUT_MONO)
-        val |= WM8940_PM3_MONOMIX | WM8940_PM3_MONO;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_3, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_3];
+    regval &= ~(WM8940_PM3_SPKMIX | WM8940_PM3_SPKP | WM8940_PM3_SPKN);
+    regval &= ~(WM8940_PM3_MONOMIX | WM8940_PM3_MONO);
+
+    if (output & WM8940_OUTPUT_SPK)
+        regval |= WM8940_PM3_SPKMIX | WM8940_PM3_SPKP | WM8940_PM3_SPKN;
+    if (output & WM8940_OUTPUT_MONO)
+        regval |= WM8940_PM3_MONOMIX | WM8940_PM3_MONO;
+
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_3, regval);
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_3] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_VREFToAnalogueOutputResistance(WM8940_t* wm8940, wm8940_vroi_t vroi)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_OUTPUT_CTRL);
-    val &= ~(1 << 0);
-    val |= (vroi & 0x01) << 0;
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_OUTPUT_CTRL, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_OUTPUT_CTRL];
+    regval &= ~(1 << 0);
+    regval |= (vroi & 0x01) << 0;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_OUTPUT_CTRL, regval);
+    wm8940->_register[WM8940_REG_OUTPUT_CTRL] = regval;
     return WM8940_STATUS_OK;
 }
 
@@ -575,7 +589,6 @@ wm8940_status_t WM8940_Set_ThermalShutdown_Enable(WM8940_t* wm8940, uint8_t stat
 }
 
 /* ----- Digital audio interfaces ----- */
-// TODO: Change all WM8940_REG_READ() with read register value from struct
 wm8940_status_t WM8940_Set_Clock(WM8940_t* wm8940, uint8_t is_master, wm8940_bclkdiv_t bclk_divider, wm8940_mclkdiv_t mclk_divider, wm8940_clksel_t clock_source)
 {
     if (bclk_divider >= 6)
@@ -596,38 +609,42 @@ wm8940_status_t WM8940_Set_Clock(WM8940_t* wm8940, uint8_t is_master, wm8940_bcl
 
 wm8940_status_t WM8940_Set_AudioInterfaceFormat(WM8940_t* wm8940, wm8940_audio_iface_fmt_t format, wm8940_audio_iface_wl_t word_length)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE);
-    val &= ~(0x0F << 3);
-    val |= (format << 3);
-    val |= (word_length << 5);
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_AUDIO_INTERFACE];
+    regval &= ~(0x0F << 3);
+    regval |= (format << 3);
+    regval |= (word_length << 5);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, regval);
+    wm8940->_register[WM8940_REG_AUDIO_INTERFACE] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_FrameClock_Polarity(WM8940_t* wm8940, uint8_t invert)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE);
-    val &= ~(1 << 7);
-    val |= ((invert ? 1 : 0) << 7);
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_AUDIO_INTERFACE];
+    regval &= ~(1 << 7);
+    regval |= ((invert ? 1 : 0) << 7);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, regval);
+    wm8940->_register[WM8940_REG_AUDIO_INTERFACE] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_BCLK_Polarity(WM8940_t* wm8940, uint8_t invert)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE);
-    val &= ~(1 << 8);
-    val |= ((invert ? 1 : 0) << 8);
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_AUDIO_INTERFACE];
+    regval &= ~(1 << 8);
+    regval |= ((invert ? 1 : 0) << 8);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, regval);
+    wm8940->_register[WM8940_REG_AUDIO_INTERFACE] = regval;
     return WM8940_STATUS_OK;
 }
 
 wm8940_status_t WM8940_Set_LOUTR(WM8940_t* wm8940, uint8_t enable)
 {
-    uint16_t val = WM8940_REG_READ(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE);
-    val &= ~(1 << 9);
-    val |= ((enable ? 1 : 0) << 9);
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, val);
+    uint16_t regval = wm8940->_register[WM8940_REG_AUDIO_INTERFACE];
+    regval &= ~(1 << 9);
+    regval |= ((enable ? 1 : 0) << 9);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, regval);
+    wm8940->_register[WM8940_REG_AUDIO_INTERFACE] = regval;
     return WM8940_STATUS_OK;
 }
 
