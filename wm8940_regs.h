@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define WM8940_I2C_ADDRESS (0x1F << 1)
+#define WM8940_I2C_ADDRESS (0x1A << 1)
 
 typedef enum _wm8940_register
 {
