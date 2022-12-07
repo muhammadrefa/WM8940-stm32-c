@@ -7,56 +7,6 @@ wm8940_status_t WM8940_Init(WM8940_t* wm8940)
     // Datasheet page 64
     WM8940_SoftwareReset(wm8940);
 
-    // Set register default values based on datasheet
-    // Doesn't need to set the software reset register value
-    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] = 0x0000;
-    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_2] = 0x0000;
-    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_3] = 0x0000;
-    wm8940->_register[WM8940_REG_AUDIO_INTERFACE] = 0x0050;
-    wm8940->_register[WM8940_REG_COMPANDING_CTRL] = 0x0000;
-    wm8940->_register[WM8940_REG_CLOCK_GEN_CTRL] = 0x0140;
-    wm8940->_register[WM8940_REG_ADDITIONAL_CTRL] = 0x0000;
-    wm8940->_register[WM8940_REG_GPIO_CTRL] = 0x0000;
-    wm8940->_register[WM8940_REG_CONTROL_INTERFACE] = 0x0002;
-    wm8940->_register[WM8940_REG_DAC_CTRL] = 0x0000;
-    wm8940->_register[WM8940_REG_DAC_DIGITAL_VOL] = 0x00FF;
-    // reserved
-    wm8940->_register[WM8940_REG_ADC_CTRL] = 0x0100;
-    wm8940->_register[WM8940_REG_ADC_DIGITAL_VOL] = 0x00FF;
-    wm8940->_register[WM8940_REG_NOTCH_FILTER_1] = 0x0000;
-    wm8940->_register[WM8940_REG_NOTCH_FILTER_2] = 0x0000;
-    wm8940->_register[WM8940_REG_NOTCH_FILTER_3] = 0x0000;
-    wm8940->_register[WM8940_REG_NOTCH_FILTER_4] = 0x0000;
-    wm8940->_register[WM8940_REG_NOTCH_FILTER_5] = 0x0000;
-    wm8940->_register[WM8940_REG_NOTCH_FILTER_6] = 0x0000;
-    wm8940->_register[WM8940_REG_NOTCH_FILTER_7] = 0x0000;
-    wm8940->_register[WM8940_REG_NOTCH_FILTER_8] = 0x0000;
-    wm8940->_register[WM8940_REG_DAC_LIMITER_1] = 0x0032;
-    wm8940->_register[WM8940_REG_DAC_LIMITER_2] = 0x0000;
-    // reserved
-    wm8940->_register[WM8940_REG_ALC_CTRL_1] = 0x0034;
-    wm8940->_register[WM8940_REG_ALC_CTRL_2] = 0x000B;
-    wm8940->_register[WM8940_REG_ALC_CTRL_3] = 0x0032;
-    wm8940->_register[WM8940_REG_NOISE_GATE] = 0x0000;
-    wm8940->_register[WM8940_REG_PLL_N] = 0x0048;
-    wm8940->_register[WM8940_REG_PLL_K1] = 0x000C;
-    wm8940->_register[WM8940_REG_PLL_K2] = 0x0093;
-    wm8940->_register[WM8940_REG_PLL_K3] = 0x00E9;
-    // reserved
-    wm8940->_register[WM8940_REG_ALC_CTRL_4] = 0x0030;
-    // reserved
-    wm8940->_register[WM8940_REG_INPUT_CTRL] = 0x0002;
-    wm8940->_register[WM8940_REG_INPPGA_GAIN_CTRL] = 0x0050;
-    // reserved
-    wm8940->_register[WM8940_REG_ADC_BOOST_CTRL] = 0x0000;
-    // reserved
-    wm8940->_register[WM8940_REG_OUTPUT_CTRL] = 0x0002;
-    wm8940->_register[WM8940_REG_SPK_MIXER] = 0x0000;
-    // reserved
-    wm8940->_register[WM8940_REG_SPK_VOL_CTRL] = 0x0079;
-    // reserved
-    wm8940->_register[WM8940_REG_MONO_MIXER_CTRL] = 0x0000;
-
     // Power up sequence
 
     // Enable VMID_OP_EN and LVLSHIFT_EN
@@ -849,6 +799,57 @@ wm8940_status_t WM8940_Get_ALC_Gain(WM8940_t* wm8940, uint8_t* alc_gain)
 wm8940_status_t WM8940_SoftwareReset(WM8940_t* wm8940)
 {
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_SOFTWARE_RESET, 1);
+
+    // Set register default values based on datasheet
+    // Doesn't need to set the software reset register value
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] = 0x0000;
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_2] = 0x0000;
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_3] = 0x0000;
+    wm8940->_register[WM8940_REG_AUDIO_INTERFACE] = 0x0050;
+    wm8940->_register[WM8940_REG_COMPANDING_CTRL] = 0x0000;
+    wm8940->_register[WM8940_REG_CLOCK_GEN_CTRL] = 0x0140;
+    wm8940->_register[WM8940_REG_ADDITIONAL_CTRL] = 0x0000;
+    wm8940->_register[WM8940_REG_GPIO_CTRL] = 0x0000;
+    wm8940->_register[WM8940_REG_CONTROL_INTERFACE] = 0x0002;
+    wm8940->_register[WM8940_REG_DAC_CTRL] = 0x0000;
+    wm8940->_register[WM8940_REG_DAC_DIGITAL_VOL] = 0x00FF;
+    // reserved
+    wm8940->_register[WM8940_REG_ADC_CTRL] = 0x0100;
+    wm8940->_register[WM8940_REG_ADC_DIGITAL_VOL] = 0x00FF;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_1] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_2] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_3] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_4] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_5] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_6] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_7] = 0x0000;
+    wm8940->_register[WM8940_REG_NOTCH_FILTER_8] = 0x0000;
+    wm8940->_register[WM8940_REG_DAC_LIMITER_1] = 0x0032;
+    wm8940->_register[WM8940_REG_DAC_LIMITER_2] = 0x0000;
+    // reserved
+    wm8940->_register[WM8940_REG_ALC_CTRL_1] = 0x0034;
+    wm8940->_register[WM8940_REG_ALC_CTRL_2] = 0x000B;
+    wm8940->_register[WM8940_REG_ALC_CTRL_3] = 0x0032;
+    wm8940->_register[WM8940_REG_NOISE_GATE] = 0x0000;
+    wm8940->_register[WM8940_REG_PLL_N] = 0x0048;
+    wm8940->_register[WM8940_REG_PLL_K1] = 0x000C;
+    wm8940->_register[WM8940_REG_PLL_K2] = 0x0093;
+    wm8940->_register[WM8940_REG_PLL_K3] = 0x00E9;
+    // reserved
+    wm8940->_register[WM8940_REG_ALC_CTRL_4] = 0x0030;
+    // reserved
+    wm8940->_register[WM8940_REG_INPUT_CTRL] = 0x0002;
+    wm8940->_register[WM8940_REG_INPPGA_GAIN_CTRL] = 0x0050;
+    // reserved
+    wm8940->_register[WM8940_REG_ADC_BOOST_CTRL] = 0x0000;
+    // reserved
+    wm8940->_register[WM8940_REG_OUTPUT_CTRL] = 0x0002;
+    wm8940->_register[WM8940_REG_SPK_MIXER] = 0x0000;
+    // reserved
+    wm8940->_register[WM8940_REG_SPK_VOL_CTRL] = 0x0079;
+    // reserved
+    wm8940->_register[WM8940_REG_MONO_MIXER_CTRL] = 0x0000;
+    
     return WM8940_STATUS_OK;
 }
 
