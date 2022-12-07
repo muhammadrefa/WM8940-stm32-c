@@ -57,9 +57,31 @@ wm8940_status_t WM8940_Init(WM8940_t* wm8940)
     // reserved
     wm8940->_register[WM8940_REG_MONO_MIXER_CTRL] = 0x0000;
 
+    // Power up sequence
+
     // Enable VMID_OP_EN and LVLSHIFT_EN
-    uint16_t regval = (1 << 8) | (1 << 7);
-    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, regval);
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] |= (1 << 8) | (1 << 7);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1]);
+
+    // Enable POB_CTRL and VMID SOFT_START
+    wm8940->_register[WM8940_REG_ADDITIONAL_CTRL] |= (1 << 6) | (1 << 5);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADDITIONAL_CTRL, wm8940->_register[WM8940_REG_ADDITIONAL_CTRL]);
+
+    // Set VMIDSEL to 50 ohm
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] |= (2 << 0);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1]);
+
+    // Wait for the VMID supply to settle
+    HAL_Delay(500);
+
+    // Enable analogue amplifier BIASEN and VMID buffer BUFIOEN
+    wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] |= (1 << 3) | (1 << 2);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_POWER_MANAGEMENT_1, wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1]);
+
+    // Disable POB_CTRL and VMID SOFT_START
+    wm8940->_register[WM8940_REG_ADDITIONAL_CTRL] &= ~((1 << 6) | (1 << 5));
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADDITIONAL_CTRL, wm8940->_register[WM8940_REG_ADDITIONAL_CTRL]);
+
     return WM8940_STATUS_OK;
 }
 
