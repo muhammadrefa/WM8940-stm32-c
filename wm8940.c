@@ -417,6 +417,18 @@ wm8940_status_t WM8940_Set_DAC_AutoMute(WM8940_t* wm8940, uint8_t state)
     return WM8940_STATUS_OK;
 }
 
+wm8940_status_t WM8940_Set_DAC_LimiterVolumeBoost(WM8940_t* wm8940, uint8_t value)
+{
+    if (value > 12)
+        return WM8940_STATUS_INVALID;
+    uint16_t regval = wm8940->_register[WM8940_REG_DAC_LIMITER_2];
+    regval &= ~(7 << 4);
+    regval |= (value) << 4;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_LIMITER_2, regval);
+    wm8940->_register[WM8940_REG_DAC_LIMITER_2] = regval;
+    return WM8940_STATUS_OK;
+}
+
 /* ----- Analogue outputs ----- */
 wm8940_status_t WM8940_Set_Speaker_Source(WM8940_t* wm8940, wm8940_speaker_source_t source)
 {
@@ -549,6 +561,16 @@ wm8940_status_t WM8940_Set_VREFToAnalogueOutputResistance(WM8940_t* wm8940, wm89
     return WM8940_STATUS_OK;
 }
 
+wm8940_status_t WM8940_Set_SlowClock_Enable(WM8940_t* wm8940, uint8_t state)
+{
+    uint16_t regval = wm8940->_register[WM8940_REG_ADDITIONAL_CTRL];
+    regval &= ~(1 << 0);
+    regval |= (state ? 1 : 0) << 0;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADDITIONAL_CTRL, regval);
+    regval = wm8940->_register[WM8940_REG_ADDITIONAL_CTRL] = regval;
+    return WM8940_STATUS_OK;
+}
+
 /* ----- Output switch ----- */
 wm8940_status_t WM8940_Set_ThermalShutdown_Enable(WM8940_t* wm8940, uint8_t state)
 {
@@ -615,6 +637,26 @@ wm8940_status_t WM8940_Set_LOUTR(WM8940_t* wm8940, uint8_t enable)
     uint16_t regval = wm8940->_register[WM8940_REG_AUDIO_INTERFACE];
     regval &= ~(1 << 9);
     regval |= ((enable ? 1 : 0) << 9);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, regval);
+    wm8940->_register[WM8940_REG_AUDIO_INTERFACE] = regval;
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_DAC_SwapLRData(WM8940_t* wm8940, uint8_t swap)
+{
+    uint16_t regval = wm8940->_register[WM8940_REG_AUDIO_INTERFACE];
+    regval &= ~(1 << 2);
+    regval |= ((swap ? 1 : 0) << 2);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, regval);
+    wm8940->_register[WM8940_REG_AUDIO_INTERFACE] = regval;
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_ADC_SwapLRData(WM8940_t* wm8940, uint8_t swap)
+{
+    uint16_t regval = wm8940->_register[WM8940_REG_AUDIO_INTERFACE];
+    regval &= ~(1 << 1);
+    regval |= ((swap ? 1 : 0) << 1);
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_AUDIO_INTERFACE, regval);
     wm8940->_register[WM8940_REG_AUDIO_INTERFACE] = regval;
     return WM8940_STATUS_OK;
@@ -886,5 +928,16 @@ wm8940_status_t WM8940_Get_PowerManagement2(WM8940_t* wm8940, uint16_t* status)
 wm8940_status_t WM8940_Get_PowerManagement3(WM8940_t* wm8940, uint16_t* status)
 {
     *status = wm8940->_register[WM8940_REG_POWER_MANAGEMENT_3];
+    return WM8940_STATUS_OK;
+}
+
+/* ----- Pop minimisation ----- */
+wm8940_status_t WM8940_Set_FastVMIDDischarge_Enable(WM8940_t* wm8940, uint8_t state)
+{
+    uint16_t regval = wm8940->_register[WM8940_REG_ADDITIONAL_CTRL];
+    regval &= ~(1 << 4);
+    regval |= ((state ? 1 : 0) << 4);
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADDITIONAL_CTRL, regval);
+    wm8940->_register[WM8940_REG_ADDITIONAL_CTRL] = regval;
     return WM8940_STATUS_OK;
 }

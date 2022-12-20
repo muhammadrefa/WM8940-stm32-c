@@ -84,32 +84,32 @@ int main(void)
     - [X] High pass filter
     - [ ] Notch filter
     - [X] Digital ADC volume control
-- [ ] Input limiter/Automatic Level Control (ALC)
+- [X] Input limiter/Automatic Level Control (ALC)
     - [X] Operation mode (Normal/Limiter)
     - [X] Attack and decay times
     - [X] Minimum and maximum gain
     - [X] Hold time and ALC level
-    - [ ] Noise gate
+    - [X] Noise gate
     - [X] ALC zero cross
 - [ ] Output signal path
     - [X] Hi-Fi DAC volume control
     - [X] Hi-Fi Digital to Analogue Converter (DAC)
     - [X] Automute
     - [ ] DAC output limiter
-    - [ ] Volume boost
-- [ ] Analogue outputs
+    - [X] Volume boost
+- [X] Analogue outputs
     - [X] SPKOUTP/SPKOUTN outputs
-    - [ ] Zero cross timeout
+    - [X] Zero cross timeout
     - [X] Enabling the outputs
     - [X] Unused analogue inputs/outputs (VREF to analogue output resistance/VROI)
 - [X] Output switch
     - [X] Thermal shutdown
-- [ ] Digital audio interfaces
+- [X] Digital audio interfaces
     - [X] Set audio format
     - [X] Set word length
     - [X] Set frame clock and BCLK polarity
     - [X] Set LOUTR
-    - [ ] (ADC & DAC) data L&R swap
+    - [X] (ADC & DAC) data L&R swap
     - [X] Clock generation control
 - [X] Audio sample rates
 - [X] Master clock and Phase Locked Loop (PLL)
@@ -129,4 +129,7 @@ int main(void)
 - [X] Power management
     - [X] VMID control
     - [X] BIASEN control
-- [ ] POP minimisation
+- [X] POP minimisation
+    - [X] Power on Bias control (configured on init)
+    - [X] VMID soft start (configured on init)
+    - [X] Fast VMID discharge

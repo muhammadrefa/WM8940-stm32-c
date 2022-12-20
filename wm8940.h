@@ -69,6 +69,7 @@ wm8940_status_t WM8940_Set_DAC_Polarity(WM8940_t* wm8940, uint8_t invert);
 wm8940_status_t WM8940_Set_DAC_Volume(WM8940_t* wm8940, uint8_t val);
 wm8940_status_t WM8940_Set_DAC_SoftMute(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_DAC_AutoMute(WM8940_t* wm8940, uint8_t state);
+wm8940_status_t WM8940_Set_DAC_LimiterVolumeBoost(WM8940_t* wm8940, uint8_t value);
 
 // Analogue outputs
 wm8940_status_t WM8940_Set_Speaker_Source(WM8940_t* wm8940, wm8940_speaker_source_t source);
@@ -84,6 +85,7 @@ wm8940_status_t WM8940_Set_Mono_FromBypass_Attenuation(WM8940_t* wm8940, uint8_t
 wm8940_status_t WM8940_Set_Mono_Mute(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_Output_Enable(WM8940_t* wm8940, wm8940_output_t output);
 wm8940_status_t WM8940_Set_VREFToAnalogueOutputResistance(WM8940_t* wm8940, wm8940_vroi_t vroi);
+wm8940_status_t WM8940_Set_SlowClock_Enable(WM8940_t* wm8940, uint8_t state);
 
 // Output switch
 wm8940_status_t WM8940_Set_ThermalShutdown_Enable(WM8940_t* wm8940, uint8_t state);
@@ -94,6 +96,8 @@ wm8940_status_t WM8940_Set_AudioInterfaceFormat(WM8940_t* wm8940, wm8940_audio_i
 wm8940_status_t WM8940_Set_FrameClock_Polarity(WM8940_t* wm8940, uint8_t invert);
 wm8940_status_t WM8940_Set_BCLK_Polarity(WM8940_t* wm8940, uint8_t invert);
 wm8940_status_t WM8940_Set_LOUTR(WM8940_t* wm8940, uint8_t enable);
+wm8940_status_t WM8940_Set_DAC_SwapLRData(WM8940_t* wm8940, uint8_t swap);
+wm8940_status_t WM8940_Set_ADC_SwapLRData(WM8940_t* wm8940, uint8_t swap);
 
 // Audio sample rates
 wm8940_status_t WM8940_Set_SampleRate(WM8940_t* wm8940, wm8940_sample_rate_t sample_rate);
@@ -132,5 +136,8 @@ wm8940_status_t WM8940_Get_PowerManagement2(WM8940_t* wm8940, uint16_t* status);
 inline wm8940_status_t WM8940_Get_PowerManagement_Input(WM8940_t* wm8940, uint16_t* status) { return WM8940_Get_PowerManagement2(wm8940, status); };
 wm8940_status_t WM8940_Get_PowerManagement3(WM8940_t* wm8940, uint16_t* status);
 inline wm8940_status_t WM8940_Get_PowerManagement_Output(WM8940_t* wm8940, uint16_t* status) { return WM8940_Get_PowerManagement3(wm8940, status); };
+
+// Pop minimisation
+wm8940_status_t WM8940_Set_FastVMIDDischarge_Enable(WM8940_t* wm8940, uint8_t state);
 
 #endif // MR_WM8940_H
