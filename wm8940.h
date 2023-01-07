@@ -1,6 +1,10 @@
 #ifndef MR_WM8940_H
 #define MR_WM8940_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include "wm8940_regs.h"
 
@@ -139,5 +143,9 @@ inline wm8940_status_t WM8940_Get_PowerManagement_Output(WM8940_t* wm8940, uint1
 
 // Pop minimisation
 wm8940_status_t WM8940_Set_FastVMIDDischarge_Enable(WM8940_t* wm8940, uint8_t state);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // MR_WM8940_H

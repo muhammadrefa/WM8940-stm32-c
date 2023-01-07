@@ -1,6 +1,10 @@
 #ifndef MR_WM8940_REGS_H
 #define MR_WM8940_REGS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 #define WM8940_I2C_ADDRESS (0x1A << 1)
@@ -219,5 +223,9 @@ typedef enum _wm8940_vmid_impedance
     WM8940_VMID_IMPEDANCE_250K = 2,
     WM8940_VMID_IMPEDANCE_5K = 3
 } wm8940_vmid_impedance_t;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // MR_WM8940_REGS_H
