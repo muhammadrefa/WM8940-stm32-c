@@ -10,12 +10,12 @@ Write your implementation to write/read register from the device. For example:
 ```C
 // --- main.c ---
 
-void MyI2C_Write(i2c_handle, i2c_address, register, value)
+void MyI2C_Write(I2C_HandleTypeDef* i2c_handle, uint8_t i2c_address, uint8_t register, uint16_t value)
 {
     // TODO
 }
 
-uint16_t MyI2C_Read(i2c_handle, i2c_address, register)
+uint16_t MyI2C_Read(I2C_HandleTypeDef* i2c_handle, uint8_t i2c_address, uint8_t register)
 {
     // TODO
 }
@@ -23,8 +23,8 @@ uint16_t MyI2C_Read(i2c_handle, i2c_address, register)
 ```C
 // --- main.h ---
 
-void MyI2C_Write(i2c_handle, i2c_address, register, value);
-uint16_t MyI2C_Read(i2c_handle, i2c_address, register);
+void MyI2C_Write(I2C_HandleTypeDef* i2c_handle, uint8_t i2c_address, uint8_t register, uint16_t value);
+uint16_t MyI2C_Read(I2C_HandleTypeDef* i2c_handle, uint8_t i2c_address, uint8_t register);
 ```
 
 Edit the `wm8940.h` to call your implementation
