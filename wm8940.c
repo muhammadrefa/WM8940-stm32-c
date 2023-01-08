@@ -158,7 +158,7 @@ wm8940_status_t WM8940_Set_Boost_Volume(WM8940_t* wm8940, wm8940_input_t input, 
     switch (input)
     {
         case WM8940_INPUT_AUX: shift = 0; break;
-        case WM8940_INPUT_MICP: shift = 1; break;
+        case WM8940_INPUT_MICP: shift = 4; break;
         default: break;
     }
     if (shift < 0) return WM8940_STATUS_INVALID;
