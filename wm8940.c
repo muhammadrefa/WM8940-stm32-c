@@ -245,6 +245,7 @@ wm8940_status_t WM8940_Set_ADC_Volume(WM8940_t* wm8940, uint8_t regval)
     uint16_t val = 0;
     val |= (regval & 0xFF) << 0;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_ADC_DIGITAL_VOL, val);
+    wm8940->_register[WM8940_REG_ADC_DIGITAL_VOL] = regval;
     return WM8940_STATUS_OK;
 }
 
