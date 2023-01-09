@@ -68,23 +68,23 @@ wm8940_status_t WM8940_Set_ALC_NoiseGate_Threshold(WM8940_t* wm8940, uint8_t val
 wm8940_status_t WM8940_Set_ALC_NoiseGate_Enable(WM8940_t* wm8940, uint8_t enable);
 
 // DAC
-wm8940_status_t WM8940_Set_DAC_Enable(WM8940_t* em8940, uint8_t enable);
+wm8940_status_t WM8940_Set_DAC_Enable(WM8940_t* wm8940, uint8_t enable);
 wm8940_status_t WM8940_Set_DAC_Polarity(WM8940_t* wm8940, uint8_t invert);
 wm8940_status_t WM8940_Set_DAC_Volume(WM8940_t* wm8940, uint8_t val);
 wm8940_status_t WM8940_Set_DAC_SoftMute(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_DAC_AutoMute(WM8940_t* wm8940, uint8_t state);
-wm8940_status_t WM8940_Set_DAC_LimiterVolumeBoost(WM8940_t* wm8940, uint8_t value);
+wm8940_status_t WM8940_Set_DAC_Limiter_VolumeBoost(WM8940_t* wm8940, uint8_t value);
 
 // Analogue outputs
-wm8940_status_t WM8940_Set_Speaker_Source(WM8940_t* wm8940, wm8940_speaker_source_t source);
+wm8940_status_t WM8940_Set_Speaker_Source(WM8940_t* wm8940, wm8940_output_source_t source);
 wm8940_status_t WM8940_Set_Speaker_FromBypass_Attenuation(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_Speaker_ZeroCross(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_Speaker_Mute(WM8940_t* wm8940, uint8_t state);
-wm8940_status_t WM8940_Set_Speaker_Volume(WM8940_t* wm8940, uint8_t regval);
+wm8940_status_t WM8940_Set_Speaker_Volume(WM8940_t* wm8940, uint8_t val);
 wm8940_status_t WM8940_Set_Speaker_Volume_db(WM8940_t* wm8940, int8_t vol_db);
 uint8_t WM8940_Get_Speaker_Volume(WM8940_t* wm8940);
 uint8_t WM8940_Get_Speaker_Volume_db(WM8940_t* wm8940);
-wm8940_status_t WM8940_Set_Mono_Source(WM8940_t* wm8940, wm8940_speaker_source_t source);
+wm8940_status_t WM8940_Set_Mono_Source(WM8940_t* wm8940, wm8940_output_source_t source);
 wm8940_status_t WM8940_Set_Mono_FromBypass_Attenuation(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_Mono_Mute(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_Output_Enable(WM8940_t* wm8940, wm8940_output_t output);

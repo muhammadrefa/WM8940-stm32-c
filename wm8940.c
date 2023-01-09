@@ -418,7 +418,7 @@ wm8940_status_t WM8940_Set_DAC_AutoMute(WM8940_t* wm8940, uint8_t state)
     return WM8940_STATUS_OK;
 }
 
-wm8940_status_t WM8940_Set_DAC_LimiterVolumeBoost(WM8940_t* wm8940, uint8_t value)
+wm8940_status_t WM8940_Set_DAC_Limiter_VolumeBoost(WM8940_t* wm8940, uint8_t value)
 {
     if (value > 12)
         return WM8940_STATUS_INVALID;
@@ -431,7 +431,7 @@ wm8940_status_t WM8940_Set_DAC_LimiterVolumeBoost(WM8940_t* wm8940, uint8_t valu
 }
 
 /* ----- Analogue outputs ----- */
-wm8940_status_t WM8940_Set_Speaker_Source(WM8940_t* wm8940, wm8940_speaker_source_t source)
+wm8940_status_t WM8940_Set_Speaker_Source(WM8940_t* wm8940, wm8940_output_source_t source)
 {
     uint16_t regval = wm8940->_register[WM8940_REG_SPK_MIXER];
     regval &= ~(0x03 << 0);
@@ -506,7 +506,7 @@ uint8_t WM8940_Get_Speaker_Volume_db(WM8940_t* wm8940)
     return WM8940_SPKVOL_REG_VALUE_TO_DB(WM8940_Get_Speaker_Volume(wm8940));
 }
 
-wm8940_status_t WM8940_Set_Mono_Source(WM8940_t* wm8940, wm8940_speaker_source_t source)
+wm8940_status_t WM8940_Set_Mono_Source(WM8940_t* wm8940, wm8940_output_source_t source)
 {
     uint16_t regval = wm8940->_register[WM8940_REG_MONO_MIXER_CTRL];
     regval &= ~(0x07 << 0);

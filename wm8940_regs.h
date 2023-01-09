@@ -99,7 +99,7 @@ typedef enum _wm8940_output_source
     WM8940_OUTPUT_FROM_DAC = (1 << 0),
     WM8940_OUTPUT_FROM_BYPASS = (1 << 1),
     WM8940_OUTPUT_FROM_AUX = (1 << 2)
-} wm8940_speaker_source_t;
+} wm8940_output_source_t;
 
 typedef enum _wm8940_output
 {
