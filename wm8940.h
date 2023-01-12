@@ -73,6 +73,10 @@ wm8940_status_t WM8940_Set_DAC_Polarity(WM8940_t* wm8940, uint8_t invert);
 wm8940_status_t WM8940_Set_DAC_Volume(WM8940_t* wm8940, uint8_t val);
 wm8940_status_t WM8940_Set_DAC_SoftMute(WM8940_t* wm8940, uint8_t state);
 wm8940_status_t WM8940_Set_DAC_AutoMute(WM8940_t* wm8940, uint8_t state);
+wm8940_status_t WM8940_Set_DAC_Limiter_Enable(WM8940_t* wm8940, uint8_t enable);
+wm8940_status_t WM8940_Set_DAC_Limiter_DecayTime(WM8940_t* wm8940, uint8_t val);
+wm8940_status_t WM8940_Set_DAC_Limiter_AttackTime(WM8940_t* wm8940, uint8_t val);
+wm8940_status_t WM8940_Set_DAC_Limiter_Level(WM8940_t* wm8940, uint8_t val);
 wm8940_status_t WM8940_Set_DAC_Limiter_VolumeBoost(WM8940_t* wm8940, uint8_t value);
 
 // Analogue outputs

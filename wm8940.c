@@ -418,13 +418,62 @@ wm8940_status_t WM8940_Set_DAC_AutoMute(WM8940_t* wm8940, uint8_t state)
     return WM8940_STATUS_OK;
 }
 
+wm8940_status_t WM8940_Set_DAC_Limiter_Enable(WM8940_t* wm8940, uint8_t enable)
+{
+    uint16_t regval = wm8940->_register[WM8940_REG_DAC_LIMITER_1];
+    regval &= ~(1 << 8);
+    regval |= (enable ? 1 : 0) << 8;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_LIMITER_1, regval);
+    wm8940->_register[WM8940_REG_DAC_LIMITER_1] = regval;
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_DAC_Limiter_DecayTime(WM8940_t* wm8940, uint8_t val)
+{
+    if (val > 0x0F)
+        return WM8940_STATUS_INVALID;
+    
+    uint16_t regval = wm8940->_register[WM8940_REG_DAC_LIMITER_1];
+    regval &= ~(0x0F << 4);
+    regval |= (val & 0x0F) << 4;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_LIMITER_1, regval);
+    wm8940->_register[WM8940_REG_DAC_LIMITER_1] = regval;
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_DAC_Limiter_AttackTime(WM8940_t* wm8940, uint8_t val)
+{
+    if (val > 0x0F)
+        return WM8940_STATUS_INVALID;
+    
+    uint16_t regval = wm8940->_register[WM8940_REG_DAC_LIMITER_1];
+    regval &= ~(0x0F << 0);
+    regval |= (val & 0x0F) << 0;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_LIMITER_1, regval);
+    wm8940->_register[WM8940_REG_DAC_LIMITER_1] = regval;
+    return WM8940_STATUS_OK;
+}
+
+wm8940_status_t WM8940_Set_DAC_Limiter_Level(WM8940_t* wm8940, uint8_t val)
+{
+    if (val > 0x07)
+        return WM8940_STATUS_INVALID;
+    
+    uint16_t regval = wm8940->_register[WM8940_REG_DAC_LIMITER_2];
+    regval &= ~(0x07 << 4);
+    regval |= (val & 0x07) << 4;
+    WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_LIMITER_2, regval);
+    wm8940->_register[WM8940_REG_DAC_LIMITER_2] = regval;
+    return WM8940_STATUS_OK;
+}
+
 wm8940_status_t WM8940_Set_DAC_Limiter_VolumeBoost(WM8940_t* wm8940, uint8_t value)
 {
     if (value > 12)
         return WM8940_STATUS_INVALID;
     uint16_t regval = wm8940->_register[WM8940_REG_DAC_LIMITER_2];
-    regval &= ~(7 << 4);
-    regval |= (value) << 4;
+    regval &= ~(0x0F << 0);
+    regval |= (value) << 0;
     WM8940_REG_WRITE(wm8940->comm_handle, WM8940_REG_DAC_LIMITER_2, regval);
     wm8940->_register[WM8940_REG_DAC_LIMITER_2] = regval;
     return WM8940_STATUS_OK;

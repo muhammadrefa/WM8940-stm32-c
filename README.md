@@ -91,11 +91,11 @@ int main(void)
     - [X] Hold time and ALC level
     - [X] Noise gate
     - [X] ALC zero cross
-- [ ] Output signal path
+- [X] Output signal path
     - [X] Hi-Fi DAC volume control
     - [X] Hi-Fi Digital to Analogue Converter (DAC)
     - [X] Automute
-    - [ ] DAC output limiter
+    - [X] DAC output limiter
     - [X] Volume boost
 - [X] Analogue outputs
     - [X] SPKOUTP/SPKOUTN outputs
