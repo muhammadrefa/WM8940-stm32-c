@@ -617,6 +617,7 @@ wm8940_status_t WM8940_Set_SampleRate(WM8940_t* wm8940, wm8940_sample_rate_t sam
 /* ----- Master clock and PLL ----- */
 wm8940_status_t WM8940_Set_PLL_Enable(WM8940_t* wm8940, uint8_t state)
 {
+    // PLL disabled when VMIDSEL=0 (datasheet page 55)
     if (state && !(wm8940->_register[WM8940_REG_POWER_MANAGEMENT_1] & 0x03))
         return WM8940_STATUS_INVALID;
 
@@ -649,7 +650,7 @@ wm8940_status_t WM8940_Set_PLL_FrequencyRatio(WM8940_t* wm8940, wm8940_pll_presc
     if (K > 0xFFFFFF)
         return WM8940_STATUS_INVALID;
     
-    uint16_t n_regval = wm8940->_register[WM8940_REG_PLL_N] & (1 << 7);
+    uint16_t n_regval = wm8940->_register[WM8940_REG_PLL_N] & (1 << 7);     // mask everything but PLL_POWERDOWN
     n_regval |= (N & 0x0F) | ((prescaler & 0x03) << 4) | ((K ? 1 : 0) << 6);
     WM8940_Register_Write(wm8940, WM8940_REG_PLL_K3, K & 0x1FF);
     WM8940_Register_Write(wm8940, WM8940_REG_PLL_K2, (K >> 9) & 0x1FF);
