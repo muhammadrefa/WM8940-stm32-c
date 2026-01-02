@@ -1,7 +1,7 @@
 #include "wm8940.h"
 #include "wm8940_regs.h"
 
-wm8940_status_t WM8940_Register_Write(WM8940_t* wm8940, uint8_t register_addr, uint8_t value);
+wm8940_status_t WM8940_Register_Write(WM8940_t* wm8940, uint8_t register_addr, uint16_t value);
 
 wm8940_status_t WM8940_Init(WM8940_t* wm8940)
 {
@@ -858,7 +858,7 @@ wm8940_status_t WM8940_Set_FastVMIDDischarge_Enable(WM8940_t* wm8940, uint8_t st
 }
 
 /* ----- Register write function ----- */
-wm8940_status_t WM8940_Register_Write(WM8940_t* wm8940, uint8_t register_addr, uint8_t value)
+wm8940_status_t WM8940_Register_Write(WM8940_t* wm8940, uint8_t register_addr, uint16_t value)
 {
     WM8940_REG_WRITE(wm8940->comm_handle, register_addr, value);
     wm8940->_register[register_addr] = value;
